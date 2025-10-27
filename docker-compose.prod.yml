@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  mongo:
+    ports: []
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: dm_admin
+      MONGO_INITDB_ROOT_PASSWORD: c9ue1r9u2ui03pasd4fgh5jk16zxc7vbn8
+
+  backend:
+    environment:
+      MONGO_URL: "mongodb://dm_app:adminDM4321@mongo:27017/dm_cloud_mvp?authSource=dm_cloud_mvp"
+      DB_NAME: "dm_cloud_mvp"
+      CORS_ORIGINS: "http://217.198.9.199"
+
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8001/api/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  frontend:
+    environment:
+      - REACT_APP_BACKEND_URL=/api
+      - NODE_ENV=production
+
+  nginx:
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+      - frontend
