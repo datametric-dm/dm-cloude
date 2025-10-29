@@ -115,7 +115,7 @@ export default function Reports() {
         {/* Месячная выручка */}
         <div className="bg-white rounded-lg border border-gray-200 p-6" data-testid="monthly-revenue-chart">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Месячная выручка ({monthlyRevenue?.year})
+            Месячная выручка (2025)
           </h3>
           {revenueLoading ? (
             <div className="h-64 flex items-center justify-center">
@@ -123,10 +123,10 @@ export default function Reports() {
             </div>
           ) : (
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={monthlyRevenue?.monthly_revenue || []}>
+              <BarChart data={monthlyRevenue || []}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis 
-                  dataKey="month_name" 
+                  dataKey="month" 
                   tick={{ fontSize: 12 }}
                   angle={-45}
                   textAnchor="end"
