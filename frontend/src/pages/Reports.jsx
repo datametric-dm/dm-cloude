@@ -193,8 +193,8 @@ export default function Reports() {
           </div>
         ) : (
           <div className="space-y-4">
-            {clientRevenue?.client_revenue?.length > 0 ? (
-              clientRevenue.client_revenue.map((client, index) => (
+            {clientRevenue && clientRevenue.length > 0 ? (
+              clientRevenue.map((client, index) => (
                 <div key={client.client_id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                   <div className="flex items-center space-x-4">
                     <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
