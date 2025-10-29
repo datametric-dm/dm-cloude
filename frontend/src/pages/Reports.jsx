@@ -152,28 +152,32 @@ export default function Reports() {
             <div className="h-64 flex items-center justify-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
             </div>
-          ) : (
+          ) : (projectDistribution && projectDistribution.length > 0) ? (
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
-                  data={projectDistribution?.distribution || []}
+                  data={projectDistribution}
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ status, count, percent }) => 
-                    `${getStatusLabel(status)}: ${count} (${(percent * 100).toFixed(0)}%)`
+                  label={({ status, count }) => 
+                    `${status}: ${count}`
                   }
                   outerRadius={80}
                   fill="#8884d8"
                   dataKey="count"
                 >
-                  {(projectDistribution?.distribution || []).map((entry, index) => (
+                  {projectDistribution.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
                 <Tooltip />
               </PieChart>
             </ResponsiveContainer>
+          ) : (
+            <div className="py-8 text-center text-gray-500">
+              Нет данных для отображения
+            </div>
           )}
         </div>
       </div>
