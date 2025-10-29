@@ -207,13 +207,25 @@ export default function ProjectDialog({ project, isOpen, onClose }) {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Крайний срок
+                  Дата начала
                 </label>
                 <input
-                  {...register('deadline')}
+                  {...register('start_date')}
                   type="date"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  data-testid="project-deadline-input"
+                  data-testid="project-start-date-input"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Дата окончания
+                </label>
+                <input
+                  {...register('end_date')}
+                  type="date"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  data-testid="project-end-date-input"
                 />
               </div>
 
