@@ -115,10 +115,11 @@ export default function InvoiceDialog({ invoice, isOpen, onClose }) {
   });
 
   const onSubmit = (data) => {
-    // Преобразуем дату в ISO формат
+    // Преобразуем даты в ISO формат
     const cleanData = {
       ...data,
-      date_due: data.date_due ? new Date(data.date_due).toISOString() : null,
+      date_issued: data.date_issued || new Date().toISOString().split('T')[0],
+      date_due: data.date_due || null,
       subtotal: parseFloat(data.subtotal) || 0,
       tax_rate: parseFloat(data.tax_rate) || 0,
       tax_amount: parseFloat(data.tax_amount) || 0,
