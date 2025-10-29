@@ -27,6 +27,7 @@ export default function InvoiceDialog({ invoice, isOpen, onClose }) {
       number: '',
       client_id: '',
       project_id: '',
+      date_issued: '',
       date_due: '',
       tax_rate: 20.0,
       status: 'draft',
