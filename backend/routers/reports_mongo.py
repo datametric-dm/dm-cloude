@@ -87,7 +87,7 @@ async def get_monthly_revenue(
     
     paid_invoices = list(invoices_collection.find({
         "status": "paid",
-        "issue_date": {"$gte": start_date, "$lte": end_date}
+        "date_issued": {"$gte": start_date, "$lte": end_date}
     }))
     
     # Группируем по месяцам
@@ -98,9 +98,9 @@ async def get_monthly_revenue(
         monthly_data[month_name] = 0.0
     
     for invoice in paid_invoices:
-        issue_date = invoice.get("issue_date")
-        if isinstance(issue_date, datetime):
-            month_name = months[issue_date.month - 1]
+        date_issued = invoice.get("date_issued")
+        if isinstance(date_issued, datetime):
+            month_name = months[date_issued.month - 1]
             monthly_data[month_name] += invoice.get("amount", 0)
     
     result = [{"month": month, "revenue": revenue} for month, revenue in monthly_data.items()]
