@@ -13,6 +13,10 @@ class InvoiceBase(BaseModel):
     client_id: str
     number: str
     amount: float
+    subtotal: Optional[float] = 0.0
+    tax_rate: Optional[float] = 0.0
+    tax_amount: Optional[float] = 0.0
+    total: Optional[float] = 0.0
     status: str = "draft"  # draft, sent, paid, overdue, cancelled
     date_issued: date
     date_due: date
@@ -27,6 +31,10 @@ class InvoiceUpdate(InvoiceBase):
     client_id: Optional[str] = None
     number: Optional[str] = None
     amount: Optional[float] = None
+    subtotal: Optional[float] = None
+    tax_rate: Optional[float] = None
+    tax_amount: Optional[float] = None
+    total: Optional[float] = None
     status: Optional[str] = None
     date_issued: Optional[date] = None
     date_due: Optional[date] = None
@@ -37,6 +45,10 @@ class InvoiceRead(BaseModel):
     client_id: str
     number: str
     amount: float
+    subtotal: Optional[float] = 0.0
+    tax_rate: Optional[float] = 0.0
+    tax_amount: Optional[float] = 0.0
+    total: Optional[float] = 0.0
     status: str = "draft"
     date_issued: datetime
     date_due: datetime
