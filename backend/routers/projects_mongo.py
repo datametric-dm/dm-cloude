@@ -127,9 +127,9 @@ async def update_project(
     update_data = project_data.dict(exclude_unset=True)
     
     # Конвертируем date в datetime
-    if update_data.get("start_date"):
+    if update_data.get("start_date") and not isinstance(update_data["start_date"], datetime):
         update_data["start_date"] = datetime.combine(update_data["start_date"], datetime.min.time())
-    if update_data.get("end_date"):
+    if update_data.get("end_date") and not isinstance(update_data["end_date"], datetime):
         update_data["end_date"] = datetime.combine(update_data["end_date"], datetime.min.time())
     
     update_data["updated_at"] = datetime.utcnow()
