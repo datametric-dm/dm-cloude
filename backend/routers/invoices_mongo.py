@@ -28,6 +28,8 @@ class InvoiceUpdate(InvoiceBase):
     number: Optional[str] = None
     amount: Optional[float] = None
     status: Optional[str] = None
+    issue_date: Optional[date] = None
+    due_date: Optional[date] = None
 
 class InvoiceRead(BaseModel):
     id: str
