@@ -1,0 +1,13 @@
+.git
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
+**/.mypy_cache
+**/.venv
+**/node_modules
+**/build
+**/dist
+logs
+.env
+*.log
+*.zip
