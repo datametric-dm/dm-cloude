@@ -48,6 +48,7 @@ export default function InvoiceDialog({ invoice, isOpen, onClose }) {
     if (isOpen) {
       const defaultValues = invoice ? {
         ...invoice,
+        date_issued: invoice.date_issued ? new Date(invoice.date_issued).toISOString().split('T')[0] : '',
         date_due: invoice.date_due ? new Date(invoice.date_due).toISOString().split('T')[0] : '',
         tax_rate: invoice.tax_rate?.toString() || '20.0',
         subtotal: invoice.subtotal?.toString() || '',
@@ -58,6 +59,7 @@ export default function InvoiceDialog({ invoice, isOpen, onClose }) {
         number: `INV-${new Date().getFullYear()}-${String(Date.now()).slice(-6)}`,
         client_id: '',
         project_id: '',
+        date_issued: new Date().toISOString().split('T')[0],
         date_due: '',
         tax_rate: 20.0,
         status: 'draft',
