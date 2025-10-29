@@ -1,7 +1,11 @@
 import os
 from pymongo import MongoClient
+from dotenv import load_dotenv
 
-MONGO_URL = os.getenv("MONGO_URL", "mongodb://mongo:27017")
+# Загружаем переменные окружения из .env файла
+load_dotenv()
+
+MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017")
 DB_NAME = os.getenv("DB_NAME", "dm_cloud_mvp")
 
 client = MongoClient(MONGO_URL)
