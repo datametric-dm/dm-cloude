@@ -78,7 +78,7 @@ export default function RecentActivity() {
   function getStatusLabel(status) {
     const statusMap = {
       planning: 'Планирование',
-      in_progress: 'В работе',
+      in_progress: 'В процессе',
       review: 'На проверке',
       completed: 'Завершён',
       on_hold: 'Приостановлен',
