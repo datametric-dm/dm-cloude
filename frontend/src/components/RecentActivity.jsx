@@ -89,10 +89,14 @@ export default function RecentActivity() {
 
   function getPaymentStatusLabel(status) {
     const statusMap = {
+      pending: 'Ожидает оплаты',
+      completed: 'Оплачено',
+      failed: 'Не удалось',
+      cancelled: 'Отменён',
+      // Старые значения для совместимости
       planned: 'Планируемый',
       received: 'Получен',
       overdue: 'Просрочен',
-      cancelled: 'Отменён',
     };
     return statusMap[status] || status;
   }
