@@ -243,6 +243,21 @@ export default function InvoiceDialog({ invoice, isOpen, onClose }) {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Дата выставления *
+                </label>
+                <input
+                  {...register('date_issued', { required: 'Обязательное поле' })}
+                  type="date"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  data-testid="invoice-issued-date-input"
+                />
+                {errors.date_issued && (
+                  <p className="text-red-500 text-sm mt-1">{errors.date_issued.message}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Срок оплаты *
                 </label>
                 <input
