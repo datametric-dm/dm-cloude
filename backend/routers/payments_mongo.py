@@ -116,7 +116,7 @@ async def update_payment(
     
     update_data = payment_data.dict(exclude_unset=True)
     
-    if update_data.get("payment_date"):
+    if update_data.get("payment_date") and not isinstance(update_data["payment_date"], datetime):
         update_data["payment_date"] = datetime.combine(update_data["payment_date"], datetime.min.time())
     
     payments_collection.update_one({"id": payment_id}, {"$set": update_data})
