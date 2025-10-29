@@ -9,8 +9,7 @@ security = HTTPBearer()
 async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
     return {"id": "dummy"}
 
-from database.base import db
-users_collection = db["users"]
+from database.base import db, users_collection
 
 try:
     import bcrypt
