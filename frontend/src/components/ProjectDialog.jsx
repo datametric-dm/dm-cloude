@@ -76,11 +76,12 @@ export default function ProjectDialog({ project, isOpen, onClose }) {
   });
 
   const onSubmit = (data) => {
-    // Преобразуем дату в ISO формат
+    // Преобразуем даты и бюджет
     const cleanData = {
       ...data,
       budget: data.budget ? parseFloat(data.budget) : null,
-      deadline: data.deadline ? new Date(data.deadline).toISOString() : null,
+      start_date: data.start_date || null,
+      end_date: data.end_date || null,
     };
     
     // Убираем пустые строки
