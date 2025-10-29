@@ -147,8 +147,8 @@ def load_invoices(clients, projects):
             "number": "INV-2024-001",
             "amount": 250000.00,
             "status": "sent",
-            "issue_date": today - timedelta(days=15),
-            "due_date": today + timedelta(days=15),
+            "date_issued": today - timedelta(days=15),
+            "date_due": today + timedelta(days=15),
             "description": "Аванс 50% за разработку сайта",
             "notes": "Счет отправлен на email клиента",
             "created_at": today - timedelta(days=15)
@@ -160,8 +160,8 @@ def load_invoices(clients, projects):
             "number": "INV-2024-002",
             "amount": 125000.00,
             "status": "draft",
-            "issue_date": today,
-            "due_date": today + timedelta(days=30),
+            "date_issued": today,
+            "date_due": today + timedelta(days=30),
             "description": "Аванс 50% за внедрение CRM",
             "notes": "Черновик счета, ожидает согласования",
             "created_at": today
@@ -173,8 +173,8 @@ def load_invoices(clients, projects):
             "number": "INV-2024-003",
             "amount": 1200000.00,
             "status": "paid",
-            "issue_date": today - timedelta(days=100),
-            "due_date": today - timedelta(days=70),
+            "date_issued": today - timedelta(days=100),
+            "date_due": today - timedelta(days=70),
             "description": "Полная стоимость модернизации IT-инфраструктуры",
             "notes": "Оплачено полностью, проект завершен",
             "created_at": today - timedelta(days=100)
