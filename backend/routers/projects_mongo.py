@@ -95,9 +95,9 @@ async def create_project(
     project_dict = project_data.dict()
     
     # Конвертируем date в datetime для MongoDB
-    if project_dict.get("start_date"):
+    if project_dict.get("start_date") and not isinstance(project_dict["start_date"], datetime):
         project_dict["start_date"] = datetime.combine(project_dict["start_date"], datetime.min.time())
-    if project_dict.get("end_date"):
+    if project_dict.get("end_date") and not isinstance(project_dict["end_date"], datetime):
         project_dict["end_date"] = datetime.combine(project_dict["end_date"], datetime.min.time())
     
     project_dict.update({
