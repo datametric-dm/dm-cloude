@@ -160,14 +160,8 @@ export default function Payments() {
         <div>
           <div className="flex items-center text-sm text-gray-600 mb-1">
             <Calendar className="w-4 h-4 mr-1" />
-            <span>План: {formatDate(payment.payment_date_planned)}</span>
+            <span>План: {formatDate(payment.payment_date)}</span>
           </div>
-          {payment.payment_date_actual && (
-            <div className="flex items-center text-sm text-green-600">
-              <CheckCircle className="w-4 h-4 mr-1" />
-              <span>Факт: {formatDate(payment.payment_date_actual)}</span>
-            </div>
-          )}
         </div>
       ),
     },
