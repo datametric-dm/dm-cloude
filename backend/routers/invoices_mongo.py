@@ -14,8 +14,8 @@ class InvoiceBase(BaseModel):
     number: str
     amount: float
     status: str = "draft"  # draft, sent, paid, overdue, cancelled
-    issue_date: date
-    due_date: date
+    date_issued: date
+    date_due: date
     description: Optional[str] = None
     notes: Optional[str] = None
 
@@ -28,8 +28,8 @@ class InvoiceUpdate(InvoiceBase):
     number: Optional[str] = None
     amount: Optional[float] = None
     status: Optional[str] = None
-    issue_date: Optional[date] = None
-    due_date: Optional[date] = None
+    date_issued: Optional[date] = None
+    date_due: Optional[date] = None
 
 class InvoiceRead(BaseModel):
     id: str
@@ -38,8 +38,8 @@ class InvoiceRead(BaseModel):
     number: str
     amount: float
     status: str = "draft"
-    issue_date: datetime
-    due_date: datetime
+    date_issued: datetime
+    date_due: datetime
     description: Optional[str] = None
     notes: Optional[str] = None
     created_at: datetime
