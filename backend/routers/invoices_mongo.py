@@ -124,10 +124,10 @@ async def update_invoice(
     
     update_data = invoice_data.dict(exclude_unset=True)
     
-    if update_data.get("issue_date") and not isinstance(update_data["issue_date"], datetime):
-        update_data["issue_date"] = datetime.combine(update_data["issue_date"], datetime.min.time())
-    if update_data.get("due_date") and not isinstance(update_data["due_date"], datetime):
-        update_data["due_date"] = datetime.combine(update_data["due_date"], datetime.min.time())
+    if update_data.get("date_issued") and not isinstance(update_data["date_issued"], datetime):
+        update_data["date_issued"] = datetime.combine(update_data["date_issued"], datetime.min.time())
+    if update_data.get("date_due") and not isinstance(update_data["date_due"], datetime):
+        update_data["date_due"] = datetime.combine(update_data["date_due"], datetime.min.time())
     
     invoices_collection.update_one({"id": invoice_id}, {"$set": update_data})
     
