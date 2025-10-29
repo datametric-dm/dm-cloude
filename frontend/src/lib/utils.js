@@ -46,21 +46,25 @@ export function getStatusBadgeClass(status) {
   return statusClasses[status] || 'bg-gray-100 text-gray-800';
 }
 
-export function getStatusLabel(status, type = 'project') {
+export function getStatusLabel(type, status) {
   const labels = {
     project: {
       planning: 'Планирование',
-      in_progress: 'В работе',
+      in_progress: 'В процессе',
       review: 'На проверке',
       completed: 'Завершён',
       on_hold: 'Приостановлен',
       cancelled: 'Отменён',
     },
     payment: {
+      pending: 'Ожидает оплаты',
+      completed: 'Оплачено',
+      failed: 'Не удалось',
+      cancelled: 'Отменён',
+      // Старые значения для совместимости
       planned: 'Планируемый',
       received: 'Получен',
       overdue: 'Просрочен',
-      cancelled: 'Отменён',
     },
     invoice: {
       draft: 'Черновик',
