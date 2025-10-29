@@ -23,7 +23,8 @@ export default function ProjectDialog({ project, isOpen, onClose }) {
       client_id: '',
       status: 'planning',
       budget: '',
-      deadline: '',
+      start_date: '',
+      end_date: '',
       brief: '',
       requirements: '',
       deliverables: '',
@@ -35,7 +36,8 @@ export default function ProjectDialog({ project, isOpen, onClose }) {
     if (isOpen) {
       const defaultValues = project ? {
         ...project,
-        deadline: project.deadline ? new Date(project.deadline).toISOString().split('T')[0] : '',
+        start_date: project.start_date ? new Date(project.start_date).toISOString().split('T')[0] : '',
+        end_date: project.end_date ? new Date(project.end_date).toISOString().split('T')[0] : '',
         budget: project.budget?.toString() || '',
       } : {
         name: '',
@@ -43,7 +45,8 @@ export default function ProjectDialog({ project, isOpen, onClose }) {
         client_id: '',
         status: 'planning',
         budget: '',
-        deadline: '',
+        start_date: '',
+        end_date: '',
         brief: '',
         requirements: '',
         deliverables: '',
