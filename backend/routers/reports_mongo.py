@@ -10,9 +10,13 @@ router = APIRouter(prefix="/reports")
 class DashboardStats(BaseModel):
     total_clients: int
     active_projects: int
+    total_projects: int
     total_revenue: float
+    pending_revenue: float
     pending_invoices: int
     overdue_invoices: int
+    overdue_payments_count: int
+    overdue_amount: float
     total_payments: int
 
 class MonthlyRevenue(BaseModel):
