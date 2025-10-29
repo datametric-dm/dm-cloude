@@ -95,9 +95,9 @@ async def create_invoice(
 ):
     invoice_dict = invoice_data.dict()
     
-    if invoice_dict.get("issue_date"):
+    if invoice_dict.get("issue_date") and not isinstance(invoice_dict["issue_date"], datetime):
         invoice_dict["issue_date"] = datetime.combine(invoice_dict["issue_date"], datetime.min.time())
-    if invoice_dict.get("due_date"):
+    if invoice_dict.get("due_date") and not isinstance(invoice_dict["due_date"], datetime):
         invoice_dict["due_date"] = datetime.combine(invoice_dict["due_date"], datetime.min.time())
     
     invoice_dict.update({
