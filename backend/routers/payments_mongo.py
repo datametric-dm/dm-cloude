@@ -91,7 +91,7 @@ async def create_payment(
 ):
     payment_dict = payment_data.dict()
     
-    if payment_dict.get("payment_date"):
+    if payment_dict.get("payment_date") and not isinstance(payment_dict["payment_date"], datetime):
         payment_dict["payment_date"] = datetime.combine(payment_dict["payment_date"], datetime.min.time())
     
     payment_dict.update({
