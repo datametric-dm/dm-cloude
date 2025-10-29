@@ -25,6 +25,7 @@ class PaymentUpdate(PaymentBase):
     client_id: Optional[str] = None
     amount: Optional[float] = None
     status: Optional[str] = None
+    payment_date: Optional[date] = None
 
 class PaymentRead(BaseModel):
     id: str
