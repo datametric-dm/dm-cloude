@@ -8,7 +8,11 @@ import uuid
 
 router = APIRouter(prefix="/projects")
 
-# Pydantic схемы
+# Pydantic схемы для направлений проекта
+class ProjectDirection(BaseModel):
+    name: str  # продвижение, аналитика, внедрение CRM, интеграция CRM и МИС, колл-центр, создание сайта
+    budget: Optional[float] = 0.0
+
 class ProjectBase(BaseModel):
     name: str
     client_id: str
@@ -16,7 +20,8 @@ class ProjectBase(BaseModel):
     status: str = "planning"  # planning, in_progress, completed, cancelled
     start_date: Optional[date] = None
     end_date: Optional[date] = None
-    budget: Optional[float] = 0.0
+    budget: Optional[float] = 0.0  # Общий бюджет (вычисляется автоматически)
+    directions: Optional[List[ProjectDirection]] = []  # Направления с бюджетами
     notes: Optional[str] = None
 
 class ProjectCreate(ProjectBase):
