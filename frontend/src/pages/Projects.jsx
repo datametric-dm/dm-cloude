@@ -232,13 +232,13 @@ export default function Projects() {
 
       {/* Фильтры */}
       <div className="bg-white rounded-lg border border-gray-200 p-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
           {/* Поиск */}
           <div className="flex items-center space-x-2">
             <Search className="w-5 h-5 text-gray-400" />
             <input
               type="text"
-              placeholder="Поиск по названию или описанию..."
+              placeholder="Поиск по названию..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="flex-1 border-none outline-none text-gray-900 placeholder-gray-500"
@@ -273,6 +273,34 @@ export default function Projects() {
                 {client.name}
               </option>
             ))}
+          </select>
+          
+          {/* Фильтр по направлениям */}
+          <select
+            value={directionFilter}
+            onChange={(e) => setDirectionFilter(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+            data-testid="direction-filter-select"
+          >
+            <option value="">Все направления</option>
+            <option value="продвижение">продвижение</option>
+            <option value="аналитика">аналитика</option>
+            <option value="внедрение CRM">внедрение CRM</option>
+            <option value="интеграция CRM и МИС">интеграция CRM и МИС</option>
+            <option value="колл-центр">колл-центр</option>
+            <option value="создание сайта">создание сайта</option>
+          </select>
+          
+          {/* Фильтр по проект-менеджерам */}
+          <select
+            value={managerFilter}
+            onChange={(e) => setManagerFilter(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+            data-testid="manager-filter-select"
+          >
+            <option value="">Все менеджеры</option>
+            <option value="Прыгункова Елена">Прыгункова Елена</option>
+            <option value="Гарасюта Александр">Гарасюта Александр</option>
           </select>
         </div>
       </div>
