@@ -170,3 +170,80 @@ async def get_project_status_distribution(
         })
     
     return result
+
+
+# Схема для отчета по проекту
+class ProjectReport(BaseModel):
+    project_id: str
+    project_name: str
+    monthly_revenue: float  # Месячная выручка
+    average_check: float  # Средний чек
+    pending_payments: float  # Ожидание платежей
+    overdue_payments: float  # Просрочено платежей
+    total_invoices: int  # Всего счетов
+    paid_invoices: int  # Оплаченных счетов
+    period_start: Optional[datetime] = None
+    period_end: Optional[datetime] = None
+
+from typing import Optional
+
+@router.get("/project/{project_id}", response_model=ProjectReport)
+async def get_project_report(
+    project_id: str,
+    period_months: int = Query(default=1, ge=1, le=12),  # Период в месяцах
+    current_user = Depends(get_current_user),
+    db = Depends(get_db)
+):
+    """Получить отчет по конкретному проекту"""
+    from datetime import datetime, timedelta
+    
+    # Проверяем существование проекта
+    project = projects_collection.find_one({"id": project_id})
+    if not project:
+        raise HTTPException(status_code=404, detail="Проект не найден")
+    
+    # Определяем период
+    period_end = datetime.utcnow()
+    period_start = period_end - timedelta(days=30 * period_months)
+    
+    # Получаем счета по проекту за период
+    invoices = list(invoices_collection.find({
+        "project_id": project_id,
+        "created_at": {"$gte": period_start, "$lte": period_end}
+    }))
+    
+    # Получаем платежи по проекту за период
+    payments = list(payments_collection.find({
+        "project_id": project_id,
+        "payment_date": {"$gte": period_start, "$lte": period_end}
+    }))
+    
+    # Рассчитываем метрики
+    total_invoices = len(invoices)
+    paid_invoices = len([inv for inv in invoices if inv.get("status") == "paid"])
+    
+    # Месячная выручка (из оплаченных счетов)
+    paid_amount = sum(inv.get("amount", 0) for inv in invoices if inv.get("status") == "paid")
+    monthly_revenue = paid_amount / period_months if period_months > 0 else paid_amount
+    
+    # Средний чек
+    average_check = paid_amount / paid_invoices if paid_invoices > 0 else 0
+    
+    # Ожидание платежей (неоплаченные счета)
+    pending_payments = sum(inv.get("amount", 0) for inv in invoices if inv.get("status") in ["draft", "sent"])
+    
+    # Просрочено платежей
+    overdue_payments = sum(inv.get("amount", 0) for inv in invoices if inv.get("status") == "overdue")
+    
+    return {
+        "project_id": project_id,
+        "project_name": project.get("name", ""),
+        "monthly_revenue": monthly_revenue,
+        "average_check": average_check,
+        "pending_payments": pending_payments,
+        "overdue_payments": overdue_payments,
+        "total_invoices": total_invoices,
+        "paid_invoices": paid_invoices,
+        "period_start": period_start,
+        "period_end": period_end
+    }
