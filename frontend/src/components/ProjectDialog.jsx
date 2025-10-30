@@ -271,6 +271,19 @@ export default function ProjectDialog({ project, isOpen, onClose }) {
 
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Общий бюджет (руб.) - рассчитывается автоматически
+                </label>
+                <input
+                  type="text"
+                  value={calculateTotalBudget().toLocaleString('ru-RU') + ' ₽'}
+                  disabled
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-700 font-semibold"
+                  data-testid="project-budget-display"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Описание
                 </label>
                 <textarea
@@ -333,7 +346,7 @@ export default function ProjectDialog({ project, isOpen, onClose }) {
                     
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Бюджет (руб.)
+                        Бюджет направления (руб.)
                       </label>
                       <input
                         type="number"
@@ -347,16 +360,6 @@ export default function ProjectDialog({ project, isOpen, onClose }) {
                   </div>
                 </div>
               ))}
-              
-              {/* Общий бюджет */}
-              <div className="mt-4 p-3 bg-blue-50 rounded-md">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-700">Общий бюджет проекта:</span>
-                  <span className="text-lg font-bold text-blue-600" data-testid="total-budget-display">
-                    {calculateTotalBudget().toLocaleString('ru-RU')} ₽
-                  </span>
-                </div>
-              </div>
             </div>
 
             {/* Детальная информация */}
