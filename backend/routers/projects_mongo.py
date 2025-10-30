@@ -68,6 +68,8 @@ async def get_projects(
     limit: int = Query(20, ge=1, le=100),
     status: Optional[str] = None,
     client_id: Optional[str] = None,
+    direction: Optional[str] = None,  # Фильтр по направлению
+    project_manager: Optional[str] = None,  # Фильтр по проект-менеджеру
     current_user = Depends(get_current_user),
     db = Depends(get_db)
 ):
@@ -78,6 +80,11 @@ async def get_projects(
         query["status"] = status
     if client_id:
         query["client_id"] = client_id
+    if direction:
+        # Фильтр по направлению - ищем в массиве directions
+        query["directions.name"] = direction
+    if project_manager:
+        query["project_manager"] = project_manager
     
     projects = list(projects_collection.find(query).skip(skip).limit(limit))
     total = projects_collection.count_documents(query)
