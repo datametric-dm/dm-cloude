@@ -263,6 +263,28 @@ export default function ProjectDialog({ project, isOpen, onClose }) {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Проект-менеджер
+                </label>
+                <Controller
+                  name="project_manager"
+                  control={control}
+                  render={({ field }) => (
+                    <select
+                      {...field}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      data-testid="project-manager-select"
+                    >
+                      <option value="">Выберите проект-менеджера</option>
+                      {projectManagers.map((manager, idx) => (
+                        <option key={idx} value={manager}>{manager}</option>
+                      ))}
+                    </select>
+                  )}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Дата начала
                 </label>
                 <input
