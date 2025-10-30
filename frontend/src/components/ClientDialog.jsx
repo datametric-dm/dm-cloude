@@ -46,6 +46,23 @@ export default function ClientDialog({ client, isOpen, onClose }) {
     }
   }, [isOpen, client, reset]);
 
+  // Функции для управления контактами
+  const addContact = () => {
+    setContacts([...contacts, { name: '', position: '', phone: '', email: '' }]);
+  };
+
+  const removeContact = (index) => {
+    if (contacts.length > 1) {
+      setContacts(contacts.filter((_, i) => i !== index));
+    }
+  };
+
+  const updateContact = (index, field, value) => {
+    const newContacts = [...contacts];
+    newContacts[index][field] = value;
+    setContacts(newContacts);
+  };
+
   const mutation = useMutation({
     mutationFn: (data) => {
       if (isEditing) {
@@ -66,13 +83,19 @@ export default function ClientDialog({ client, isOpen, onClose }) {
   });
 
   const onSubmit = (data) => {
-    // Убираем пустые строки
+    // Убираем пустые строки и добавляем контакты
     const cleanData = Object.fromEntries(
       Object.entries(data).map(([key, value]) => [
         key,
         typeof value === 'string' ? value.trim() || null : value,
       ])
     );
+    
+    // Добавляем контакты (фильтруем пустые)
+    cleanData.contacts = contacts.filter(contact => 
+      contact.name || contact.position || contact.phone || contact.email
+    );
+    
     mutation.mutate(cleanData);
   };
 
