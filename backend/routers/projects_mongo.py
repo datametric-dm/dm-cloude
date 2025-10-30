@@ -167,6 +167,13 @@ async def update_project(
     if update_data.get("directions"):
         total_budget = sum(direction.get("budget", 0.0) for direction in update_data["directions"])
         update_data["budget"] = total_budget
+        
+        # Конвертируем даты направлений в datetime
+        for direction in update_data["directions"]:
+            if direction.get("start_date") and not isinstance(direction["start_date"], datetime):
+                direction["start_date"] = datetime.combine(direction["start_date"], datetime.min.time())
+            if direction.get("end_date") and not isinstance(direction["end_date"], datetime):
+                direction["end_date"] = datetime.combine(direction["end_date"], datetime.min.time())
     
     # Конвертируем date в datetime
     if update_data.get("start_date") and not isinstance(update_data["start_date"], datetime):
