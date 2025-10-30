@@ -70,6 +70,7 @@ export default function ProjectDialog({ project, isOpen, onClose }) {
         description: '',
         client_id: '',
         status: 'planning',
+        project_manager: '',
         start_date: '',
         end_date: '',
         brief: '',
@@ -80,8 +81,12 @@ export default function ProjectDialog({ project, isOpen, onClose }) {
       reset(defaultValues);
       setDirections(
         project?.directions?.length > 0 
-          ? project.directions 
-          : [{ name: '', budget: '' }]
+          ? project.directions.map(d => ({
+              ...d,
+              start_date: d.start_date ? new Date(d.start_date).toISOString().split('T')[0] : '',
+              end_date: d.end_date ? new Date(d.end_date).toISOString().split('T')[0] : ''
+            }))
+          : [{ name: '', budget: '', start_date: '', end_date: '' }]
       );
     }
   }, [isOpen, project, reset]);
