@@ -123,7 +123,7 @@ export default function ClientDialog({ client, isOpen, onClose }) {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Основная информация */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
+              <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Название клиента *
                 </label>
@@ -135,17 +135,6 @@ export default function ClientDialog({ client, isOpen, onClose }) {
                 {errors.name && (
                   <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
                 )}
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Компания
-                </label>
-                <input
-                  {...register('company')}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  data-testid="client-company-input"
-                />
               </div>
             </div>
 
