@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, HTTPException
 from database.base import get_db, clients_collection, projects_collection, invoices_collection, payments_collection
 from routers.auth_mongo import get_current_user
 from pydantic import BaseModel
-from typing import Dict, List
+from typing import Dict, List, Optional
 from datetime import datetime
 
 router = APIRouter(prefix="/reports")
