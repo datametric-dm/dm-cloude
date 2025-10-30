@@ -24,6 +24,7 @@ class ProjectBase(BaseModel):
     end_date: Optional[date] = None
     budget: Optional[float] = 0.0  # Общий бюджет (вычисляется автоматически)
     directions: Optional[List[ProjectDirection]] = []  # Направления с бюджетами
+    project_manager: Optional[str] = None  # Проект-менеджер (Прыгункова Елена, Гарасюта Александр)
     # Детальная информация проекта
     brief: Optional[str] = None
     requirements: Optional[str] = None
