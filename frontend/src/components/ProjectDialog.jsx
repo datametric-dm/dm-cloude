@@ -75,6 +75,31 @@ export default function ProjectDialog({ project, isOpen, onClose }) {
     }
   }, [isOpen, project, reset]);
 
+  // Функции для управления направлениями
+  const addDirection = () => {
+    setDirections([...directions, { name: '', budget: '' }]);
+  };
+
+  const removeDirection = (index) => {
+    if (directions.length > 1) {
+      setDirections(directions.filter((_, i) => i !== index));
+    }
+  };
+
+  const updateDirection = (index, field, value) => {
+    const newDirections = [...directions];
+    newDirections[index][field] = value;
+    setDirections(newDirections);
+  };
+
+  // Вычисляем общий бюджет
+  const calculateTotalBudget = () => {
+    return directions.reduce((sum, dir) => {
+      const budget = parseFloat(dir.budget) || 0;
+      return sum + budget;
+    }, 0);
+  };
+
   const mutation = useMutation({
     mutationFn: (data) => {
       if (isEditing) {
@@ -95,13 +120,22 @@ export default function ProjectDialog({ project, isOpen, onClose }) {
   });
 
   const onSubmit = (data) => {
-    // Преобразуем даты и бюджет
+    // Преобразуем даты
     const cleanData = {
       ...data,
-      budget: data.budget ? parseFloat(data.budget) : null,
       start_date: data.start_date || null,
       end_date: data.end_date || null,
     };
+    
+    // Добавляем направления (фильтруем пустые)
+    const validDirections = directions
+      .filter(dir => dir.name && dir.name.trim())
+      .map(dir => ({
+        name: dir.name,
+        budget: parseFloat(dir.budget) || 0
+      }));
+    
+    cleanData.directions = validDirections;
     
     // Убираем пустые строки
     Object.keys(cleanData).forEach(key => {
