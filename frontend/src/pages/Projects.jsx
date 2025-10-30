@@ -14,6 +14,8 @@ export default function Projects() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [clientFilter, setClientFilter] = useState('');
+  const [directionFilter, setDirectionFilter] = useState('');  // Новый фильтр
+  const [managerFilter, setManagerFilter] = useState('');  // Новый фильтр
   const [selectedProject, setSelectedProject] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const queryClient = useQueryClient();
