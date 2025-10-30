@@ -93,7 +93,7 @@ export default function ProjectDialog({ project, isOpen, onClose }) {
 
   // Функции для управления направлениями
   const addDirection = () => {
-    setDirections([...directions, { name: '', budget: '' }]);
+    setDirections([...directions, { name: '', budget: '', start_date: '', end_date: '' }]);
   };
 
   const removeDirection = (index) => {
