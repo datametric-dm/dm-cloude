@@ -77,6 +77,18 @@ export default function Reports() {
 
   const COLORS = ['#3B82F6', '#EF4444', '#F59E0B', '#10B981', '#8B5CF6', '#F97316'];
 
+  function getStatusLabel(status) {
+    const statusMap = {
+      planning: 'Планирование',
+      in_progress: 'В процессе',
+      review: 'На проверке',
+      completed: 'Завершён',
+      on_hold: 'Приостановлен',
+      cancelled: 'Отменён',
+    };
+    return statusMap[status] || status;
+  }
+
   if (statsLoading) {
     return (
       <div className="space-y-6">
