@@ -321,7 +321,7 @@ class ManagerReport(BaseModel):
     overdue_payments: float
     total_invoices: int
     paid_invoices: int
-    projects: List[Dict[str, any]]  # Список проектов с кратким описанием
+    projects: List[Dict[str, Any]]  # Список проектов с кратким описанием
 
 @router.get("/by-manager/{manager_name}", response_model=ManagerReport)
 async def get_manager_report(
