@@ -41,6 +41,7 @@ class ProjectRead(BaseModel):
     start_date: Optional[datetime] = None  # Изменено на datetime для совместимости с MongoDB
     end_date: Optional[datetime] = None  # Изменено на datetime для совместимости с MongoDB
     budget: Optional[float] = 0.0
+    directions: Optional[List[ProjectDirection]] = []  # Направления с бюджетами
     notes: Optional[str] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
