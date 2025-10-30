@@ -10,6 +10,11 @@ import { toast } from 'sonner';
 import { useMutation } from '@tanstack/react-query';
 
 export default function Reports() {
+  const [filterType, setFilterType] = React.useState('all'); // all, manager, project
+  const [selectedManager, setSelectedManager] = React.useState('');
+  const [selectedProject, setSelectedProject] = React.useState('');
+  const [periodMonths, setPeriodMonths] = React.useState(1);
+
   const { data: dashboardStats, isLoading: statsLoading } = useQuery({
     queryKey: ['dashboard-stats'],
     queryFn: () => reportsApi.getDashboard().then(res => res.data),
