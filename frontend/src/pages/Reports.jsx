@@ -525,16 +525,4 @@ export default function Reports() {
       </div>
     </div>
   );
-
-  function getStatusLabel(status) {
-    const statusMap = {
-      planning: 'Планирование',
-      in_progress: 'В процессе',
-      review: 'На проверке',
-      completed: 'Завершён',
-      on_hold: 'Приостановлен',
-      cancelled: 'Отменён',
-    };
-    return statusMap[status] || status;
-  }
 }
