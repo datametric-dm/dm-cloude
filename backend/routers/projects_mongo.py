@@ -12,6 +12,8 @@ router = APIRouter(prefix="/projects")
 class ProjectDirection(BaseModel):
     name: str  # продвижение, аналитика, внедрение CRM, интеграция CRM и МИС, колл-центр, создание сайта
     budget: Optional[float] = 0.0
+    start_date: Optional[date] = None  # Дата старта направления
+    end_date: Optional[date] = None  # Дата остановки направления
 
 class ProjectBase(BaseModel):
     name: str
