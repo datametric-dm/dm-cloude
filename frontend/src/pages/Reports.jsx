@@ -293,6 +293,224 @@ export default function Reports() {
           </p>
         </div>
       </div>
+
+      {/* Детальная аналитика по проектам */}
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-6">Детальная аналитика по проектам</h3>
+        
+        {/* Фильтры */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Тип отчета</label>
+            <select
+              value={filterType}
+              onChange={(e) => {
+                setFilterType(e.target.value);
+                setSelectedManager('');
+                setSelectedProject('');
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="all">Все проекты (Сводный)</option>
+              <option value="manager">По проект-менеджеру</option>
+              <option value="project">По конкретному проекту</option>
+            </select>
+          </div>
+
+          {filterType === 'manager' && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Проект-менеджер</label>
+              <select
+                value={selectedManager}
+                onChange={(e) => setSelectedManager(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Выберите менеджера</option>
+                <option value="Прыгункова Елена">Прыгункова Елена</option>
+                <option value="Гарасюта Александр">Гарасюта Александр</option>
+              </select>
+            </div>
+          )}
+
+          {filterType === 'project' && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Проект</label>
+              <select
+                value={selectedProject}
+                onChange={(e) => setSelectedProject(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Выберите проект</option>
+                {projectsData?.map((project) => (
+                  <option key={project.id} value={project.id}>
+                    {project.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Период</label>
+            <select
+              value={periodMonths}
+              onChange={(e) => setPeriodMonths(Number(e.target.value))}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value={1}>1 месяц</option>
+              <option value={3}>3 месяца</option>
+              <option value={6}>6 месяцев</option>
+              <option value={12}>12 месяцев</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Результаты аналитики */}
+        {analyticsLoading ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          </div>
+        ) : detailedAnalytics ? (
+          <div className="space-y-6">
+            {/* Заголовок отчета */}
+            <div className="border-b pb-4">
+              <h4 className="text-xl font-semibold text-gray-900">
+                {filterType === 'all' && 'Сводный отчет по всем проектам'}
+                {filterType === 'manager' && `Отчет по проект-менеджеру: ${detailedAnalytics.manager_name || selectedManager}`}
+                {filterType === 'project' && `Отчет по проекту: ${detailedAnalytics.project_name || 'Не указан'}`}
+              </h4>
+              <p className="text-sm text-gray-600 mt-1">
+                Период: {periodMonths} {periodMonths === 1 ? 'месяц' : periodMonths < 5 ? 'месяца' : 'месяцев'}
+              </p>
+            </div>
+
+            {/* Метрики */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                <p className="text-sm font-medium text-blue-900">Месячная выручка</p>
+                <p className="text-2xl font-bold text-blue-700 mt-2">
+                  {formatCurrency(detailedAnalytics.monthly_revenue || 0)}
+                </p>
+              </div>
+
+              <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+                <p className="text-sm font-medium text-green-900">Средний чек</p>
+                <p className="text-2xl font-bold text-green-700 mt-2">
+                  {formatCurrency(detailedAnalytics.average_check || 0)}
+                </p>
+              </div>
+
+              <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
+                <p className="text-sm font-medium text-yellow-900">Ожидание платежей</p>
+                <p className="text-2xl font-bold text-yellow-700 mt-2">
+                  {formatCurrency(detailedAnalytics.pending_payments || 0)}
+                </p>
+              </div>
+
+              <div className="bg-red-50 rounded-lg p-4 border border-red-200">
+                <p className="text-sm font-medium text-red-900">Просрочено платежей</p>
+                <p className="text-2xl font-bold text-red-700 mt-2">
+                  {formatCurrency(detailedAnalytics.overdue_payments || 0)}
+                </p>
+              </div>
+            </div>
+
+            {/* Дополнительная информация */}
+            <div className="bg-gray-50 rounded-lg p-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {filterType === 'all' && (
+                  <div>
+                    <p className="text-sm text-gray-600">Всего проектов</p>
+                    <p className="text-lg font-semibold text-gray-900 mt-1">
+                      {detailedAnalytics.total_projects || 0}
+                    </p>
+                  </div>
+                )}
+                {filterType === 'manager' && (
+                  <div>
+                    <p className="text-sm text-gray-600">Проектов менеджера</p>
+                    <p className="text-lg font-semibold text-gray-900 mt-1">
+                      {detailedAnalytics.total_projects || 0}
+                    </p>
+                  </div>
+                )}
+                <div>
+                  <p className="text-sm text-gray-600">Общая выручка за период</p>
+                  <p className="text-lg font-semibold text-gray-900 mt-1">
+                    {formatCurrency(detailedAnalytics.total_revenue || 0)}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">Всего счетов</p>
+                  <p className="text-lg font-semibold text-gray-900 mt-1">
+                    {detailedAnalytics.total_invoices || 0}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">Оплаченных счетов</p>
+                  <p className="text-lg font-semibold text-gray-900 mt-1">
+                    {detailedAnalytics.paid_invoices || 0}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Проекты менеджера */}
+            {filterType === 'manager' && detailedAnalytics.projects && detailedAnalytics.projects.length > 0 && (
+              <div>
+                <h5 className="text-lg font-semibold text-gray-900 mb-4">Проекты менеджера</h5>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Название</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Статус</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Бюджет</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Выручка</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {detailedAnalytics.projects.map((project) => (
+                        <tr key={project.id}>
+                          <td className="px-4 py-3 text-sm text-gray-900">{project.name}</td>
+                          <td className="px-4 py-3 text-sm">
+                            <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
+                              {getStatusLabel(project.status)}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 text-sm text-gray-900">{formatCurrency(project.budget || 0)}</td>
+                          <td className="px-4 py-3 text-sm font-semibold text-green-600">
+                            {formatCurrency(project.revenue || 0)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* Распределение по менеджерам для сводного отчета */}
+            {filterType === 'all' && detailedAnalytics.projects_by_manager && (
+              <div>
+                <h5 className="text-lg font-semibold text-gray-900 mb-4">Распределение проектов по менеджерам</h5>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {Object.entries(detailedAnalytics.projects_by_manager).map(([manager, count]) => (
+                    <div key={manager} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                      <p className="text-sm text-gray-600">{manager}</p>
+                      <p className="text-xl font-bold text-gray-900 mt-1">{count} проектов</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="text-center py-12 text-gray-500">
+            Выберите фильтры для просмотра аналитики
+          </div>
+        )}
+      </div>
     </div>
   );
 
