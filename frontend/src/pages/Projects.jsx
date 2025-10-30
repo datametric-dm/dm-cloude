@@ -117,6 +117,19 @@ export default function Projects() {
       ),
     },
     {
+      header: 'Проект-менеджер',
+      accessor: 'project_manager',
+      cell: (project) => (
+        <div>
+          {project.project_manager ? (
+            <p className="text-sm text-gray-900">{project.project_manager}</p>
+          ) : (
+            <p className="text-sm text-gray-400">Не назначен</p>
+          )}
+        </div>
+      ),
+    },
+    {
       header: 'Бюджет',
       accessor: 'budget',
       cell: (project) => (
