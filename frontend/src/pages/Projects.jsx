@@ -29,11 +29,13 @@ export default function Projects() {
   }, [location.search]);
 
   const { data: projectsData, isLoading } = useQuery({
-    queryKey: ['projects', { search, status: statusFilter, client_id: clientFilter }],
+    queryKey: ['projects', { search, status: statusFilter, client_id: clientFilter, direction: directionFilter, project_manager: managerFilter }],
     queryFn: () => projectsApi.getAll({ 
       search: search || undefined,
       status: statusFilter || undefined,
       client_id: clientFilter || undefined,
+      direction: directionFilter || undefined,
+      project_manager: managerFilter || undefined,
       skip: 0,
       limit: 50 
     }).then(res => res.data),
