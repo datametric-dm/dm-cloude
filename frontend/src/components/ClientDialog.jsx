@@ -225,34 +225,103 @@ export default function ClientDialog({ client, isOpen, onClose }) {
                   />
                 </div>
               </div>
+              
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Система ЭДО
+                </label>
+                <input
+                  {...register('edo')}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Название системы электронного документооборота"
+                  data-testid="client-edo-input"
+                />
+              </div>
             </div>
 
-            {/* Контактное лицо */}
+            {/* Контактные лица */}
             <div className="border-t pt-4">
-              <h4 className="text-md font-medium text-gray-900 mb-3">Контактное лицо</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    ФИО
-                  </label>
-                  <input
-                    {...register('contact_person')}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    data-testid="client-contact-person-input"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Должность
-                  </label>
-                  <input
-                    {...register('contact_position')}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    data-testid="client-contact-position-input"
-                  />
-                </div>
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="text-md font-medium text-gray-900">Контактные лица</h4>
+                <button
+                  type="button"
+                  onClick={addContact}
+                  className="flex items-center gap-1 px-3 py-1 text-sm bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition-colors"
+                  data-testid="add-contact-btn"
+                >
+                  <Plus className="w-4 h-4" />
+                  Добавить контакт
+                </button>
               </div>
+              
+              {contacts.map((contact, index) => (
+                <div key={index} className="mb-4 p-4 border border-gray-200 rounded-md bg-gray-50">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-sm font-medium text-gray-700">Контакт #{index + 1}</span>
+                    {contacts.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeContact(index)}
+                        className="text-red-500 hover:text-red-700"
+                        data-testid={`remove-contact-${index}-btn`}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        ФИО
+                      </label>
+                      <input
+                        value={contact.name}
+                        onChange={(e) => updateContact(index, 'name', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        data-testid={`contact-${index}-name-input`}
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Должность
+                      </label>
+                      <input
+                        value={contact.position}
+                        onChange={(e) => updateContact(index, 'position', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        data-testid={`contact-${index}-position-input`}
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Телефон
+                      </label>
+                      <input
+                        value={contact.phone}
+                        onChange={(e) => updateContact(index, 'phone', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        data-testid={`contact-${index}-phone-input`}
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Email
+                      </label>
+                      <input
+                        type="email"
+                        value={contact.email}
+                        onChange={(e) => updateContact(index, 'email', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        data-testid={`contact-${index}-email-input`}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
 
             {/* Примечания */}
