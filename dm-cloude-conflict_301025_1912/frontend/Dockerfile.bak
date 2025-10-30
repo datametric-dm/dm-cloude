@@ -1,0 +1,36 @@
+# Build stage
+FROM node:20-alpine AS builder
+WORKDIR /app
+
+# Копируем package.json и yarn.lock
+COPY package.json yarn.lock ./
+
+# Устанавливаем зависимости
+RUN yarn install --frozen-lockfile --silent
+
+# Копируем все файлы проекта
+COPY . .
+
+# Устанавливаем NODE_ENV для production билда
+ENV NODE_ENV=production
+
+# Собираем проект (без .env - используется config.js)
+RUN yarn build
+
+# Runtime stage
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Копируем собранное приложение
+COPY --from=builder /app/build ./build
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./
+
+# Устанавливаем serve для раздачи статики
+RUN yarn global add serve
+
+EXPOSE 3000
+
+# Запускаем приложение
+CMD ["serve", "-s", "build", "-l", "3000"]
