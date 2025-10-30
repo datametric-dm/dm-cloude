@@ -123,6 +123,13 @@ async def create_project(
     if project_dict.get("directions"):
         total_budget = sum(direction.get("budget", 0.0) for direction in project_dict["directions"])
         project_dict["budget"] = total_budget
+        
+        # Конвертируем даты направлений в datetime
+        for direction in project_dict["directions"]:
+            if direction.get("start_date") and not isinstance(direction["start_date"], datetime):
+                direction["start_date"] = datetime.combine(direction["start_date"], datetime.min.time())
+            if direction.get("end_date") and not isinstance(direction["end_date"], datetime):
+                direction["end_date"] = datetime.combine(direction["end_date"], datetime.min.time())
     
     # Конвертируем date в datetime для MongoDB
     if project_dict.get("start_date") and not isinstance(project_dict["start_date"], datetime):
