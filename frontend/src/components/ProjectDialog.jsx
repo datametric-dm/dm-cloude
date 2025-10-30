@@ -247,19 +247,6 @@ export default function ProjectDialog({ project, isOpen, onClose }) {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Бюджет (руб.)
-                </label>
-                <input
-                  {...register('budget')}
-                  type="number"
-                  step="0.01"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  data-testid="project-budget-input"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Дата начала
                 </label>
                 <input
@@ -292,6 +279,83 @@ export default function ProjectDialog({ project, isOpen, onClose }) {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   data-testid="project-description-textarea"
                 />
+              </div>
+            </div>
+
+            {/* Направления проекта */}
+            <div className="border-t pt-4">
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="text-md font-medium text-gray-900">Направления проекта</h4>
+                <button
+                  type="button"
+                  onClick={addDirection}
+                  className="flex items-center gap-1 px-3 py-1 text-sm bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition-colors"
+                  data-testid="add-direction-btn"
+                >
+                  <Plus className="w-4 h-4" />
+                  Добавить направление
+                </button>
+              </div>
+              
+              {directions.map((direction, index) => (
+                <div key={index} className="mb-4 p-4 border border-gray-200 rounded-md bg-gray-50">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-sm font-medium text-gray-700">Направление #{index + 1}</span>
+                    {directions.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeDirection(index)}
+                        className="text-red-500 hover:text-red-700"
+                        data-testid={`remove-direction-${index}-btn`}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Направление *
+                      </label>
+                      <select
+                        value={direction.name}
+                        onChange={(e) => updateDirection(index, 'name', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        data-testid={`direction-${index}-name-select`}
+                      >
+                        <option value="">Выберите направление</option>
+                        {availableDirections.map((dir, idx) => (
+                          <option key={idx} value={dir}>{dir}</option>
+                        ))}
+                      </select>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Бюджет (руб.)
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={direction.budget}
+                        onChange={(e) => updateDirection(index, 'budget', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        data-testid={`direction-${index}-budget-input`}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+              
+              {/* Общий бюджет */}
+              <div className="mt-4 p-3 bg-blue-50 rounded-md">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-gray-700">Общий бюджет проекта:</span>
+                  <span className="text-lg font-bold text-blue-600" data-testid="total-budget-display">
+                    {calculateTotalBudget().toLocaleString('ru-RU')} ₽
+                  </span>
+                </div>
               </div>
             </div>
 
