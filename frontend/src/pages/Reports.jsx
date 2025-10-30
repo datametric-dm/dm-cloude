@@ -35,6 +35,36 @@ export default function Reports() {
     queryFn: () => reportsApi.getClientRevenue({ limit: 10 }).then(res => res.data),
   });
 
+  // Загрузка проектов для фильтра
+  const { data: projectsData } = useQuery({
+    queryKey: ['projects-list'],
+    queryFn: () => fetch(process.env.REACT_APP_BACKEND_URL + '/api/projects/', {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token') || 'dummy-token'}` }
+    }).then(res => res.json()).then(data => data.projects),
+  });
+
+  // Детальная аналитика в зависимости от фильтра
+  const { data: detailedAnalytics, isLoading: analyticsLoading } = useQuery({
+    queryKey: ['detailed-analytics', filterType, selectedManager, selectedProject, periodMonths],
+    queryFn: async () => {
+      const baseUrl = process.env.REACT_APP_BACKEND_URL;
+      const token = localStorage.getItem('token') || 'dummy-token';
+      const headers = { 'Authorization': `Bearer ${token}` };
+      
+      if (filterType === 'manager' && selectedManager) {
+        const res = await fetch(`${baseUrl}/api/reports/by-manager/${encodeURIComponent(selectedManager)}?period_months=${periodMonths}`, { headers });
+        return await res.json();
+      } else if (filterType === 'project' && selectedProject) {
+        const res = await fetch(`${baseUrl}/api/reports/project/${selectedProject}?period_months=${periodMonths}`, { headers });
+        return await res.json();
+      } else {
+        const res = await fetch(`${baseUrl}/api/reports/summary?period_months=${periodMonths}`, { headers });
+        return await res.json();
+      }
+    },
+    enabled: !!filterType,
+  });
+
   const sendReportMutation = useMutation({
     mutationFn: telegramApi.sendDailyReport,
     onSuccess: () => {
