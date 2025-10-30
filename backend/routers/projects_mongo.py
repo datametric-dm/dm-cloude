@@ -137,6 +137,11 @@ async def update_project(
     
     update_data = project_data.dict(exclude_unset=True)
     
+    # Рассчитываем общий бюджет как сумму бюджетов направлений
+    if update_data.get("directions"):
+        total_budget = sum(direction.get("budget", 0.0) for direction in update_data["directions"])
+        update_data["budget"] = total_budget
+    
     # Конвертируем date в datetime
     if update_data.get("start_date") and not isinstance(update_data["start_date"], datetime):
         update_data["start_date"] = datetime.combine(update_data["start_date"], datetime.min.time())
