@@ -247,3 +247,158 @@ async def get_project_report(
         "period_start": period_start,
         "period_end": period_end
     }
+
+# Схема для сводного отчета
+class SummaryReport(BaseModel):
+    total_projects: int
+    total_revenue: float
+    monthly_revenue: float
+    average_check: float
+    pending_payments: float
+    overdue_payments: float
+    total_invoices: int
+    paid_invoices: int
+    projects_by_manager: Dict[str, int]  # Распределение проектов по менеджерам
+
+@router.get("/summary", response_model=SummaryReport)
+async def get_summary_report(
+    period_months: int = Query(default=1, ge=1, le=12),
+    current_user = Depends(get_current_user),
+    db = Depends(get_db)
+):
+    """Получить сводный отчет по всем проектам"""
+    from datetime import datetime, timedelta
+    
+    # Определяем период
+    period_end = datetime.utcnow()
+    period_start = period_end - timedelta(days=30 * period_months)
+    
+    # Получаем все проекты
+    all_projects = list(projects_collection.find({}))
+    total_projects = len(all_projects)
+    
+    # Получаем все счета за период
+    all_invoices = list(invoices_collection.find({
+        "created_at": {"$gte": period_start, "$lte": period_end}
+    }))
+    
+    total_invoices = len(all_invoices)
+    paid_invoices = len([inv for inv in all_invoices if inv.get("status") == "paid"])
+    
+    # Рассчитываем метрики
+    total_revenue = sum(inv.get("amount", 0) for inv in all_invoices if inv.get("status") == "paid")
+    monthly_revenue = total_revenue / period_months if period_months > 0 else total_revenue
+    average_check = total_revenue / paid_invoices if paid_invoices > 0 else 0
+    pending_payments = sum(inv.get("amount", 0) for inv in all_invoices if inv.get("status") in ["draft", "sent"])
+    overdue_payments = sum(inv.get("amount", 0) for inv in all_invoices if inv.get("status") == "overdue")
+    
+    # Распределение проектов по менеджерам
+    projects_by_manager = {}
+    for project in all_projects:
+        manager = project.get("project_manager", "Не назначен")
+        projects_by_manager[manager] = projects_by_manager.get(manager, 0) + 1
+    
+    return {
+        "total_projects": total_projects,
+        "total_revenue": total_revenue,
+        "monthly_revenue": monthly_revenue,
+        "average_check": average_check,
+        "pending_payments": pending_payments,
+        "overdue_payments": overdue_payments,
+        "total_invoices": total_invoices,
+        "paid_invoices": paid_invoices,
+        "projects_by_manager": projects_by_manager
+    }
+
+# Схема для отчета по менеджеру
+class ManagerReport(BaseModel):
+    manager_name: str
+    total_projects: int
+    total_revenue: float
+    monthly_revenue: float
+    average_check: float
+    pending_payments: float
+    overdue_payments: float
+    total_invoices: int
+    paid_invoices: int
+    projects: List[Dict[str, any]]  # Список проектов с кратким описанием
+
+@router.get("/by-manager/{manager_name}", response_model=ManagerReport)
+async def get_manager_report(
+    manager_name: str,
+    period_months: int = Query(default=1, ge=1, le=12),
+    current_user = Depends(get_current_user),
+    db = Depends(get_db)
+):
+    """Получить отчет по проект-менеджеру"""
+    from datetime import datetime, timedelta
+    
+    # Определяем период
+    period_end = datetime.utcnow()
+    period_start = period_end - timedelta(days=30 * period_months)
+    
+    # Получаем проекты менеджера
+    manager_projects = list(projects_collection.find({"project_manager": manager_name}))
+    total_projects = len(manager_projects)
+    
+    if total_projects == 0:
+        return {
+            "manager_name": manager_name,
+            "total_projects": 0,
+            "total_revenue": 0,
+            "monthly_revenue": 0,
+            "average_check": 0,
+            "pending_payments": 0,
+            "overdue_payments": 0,
+            "total_invoices": 0,
+            "paid_invoices": 0,
+            "projects": []
+        }
+    
+    # Получаем ID проектов менеджера
+    project_ids = [p.get("id") for p in manager_projects]
+    
+    # Получаем счета по проектам менеджера за период
+    manager_invoices = list(invoices_collection.find({
+        "project_id": {"$in": project_ids},
+        "created_at": {"$gte": period_start, "$lte": period_end}
+    }))
+    
+    total_invoices = len(manager_invoices)
+    paid_invoices = len([inv for inv in manager_invoices if inv.get("status") == "paid"])
+    
+    # Рассчитываем метрики
+    total_revenue = sum(inv.get("amount", 0) for inv in manager_invoices if inv.get("status") == "paid")
+    monthly_revenue = total_revenue / period_months if period_months > 0 else total_revenue
+    average_check = total_revenue / paid_invoices if paid_invoices > 0 else 0
+    pending_payments = sum(inv.get("amount", 0) for inv in manager_invoices if inv.get("status") in ["draft", "sent"])
+    overdue_payments = sum(inv.get("amount", 0) for inv in manager_invoices if inv.get("status") == "overdue")
+    
+    # Формируем информацию о проектах
+    projects_info = []
+    for project in manager_projects:
+        # Считаем выручку по проекту
+        project_invoices = [inv for inv in manager_invoices if inv.get("project_id") == project.get("id")]
+        project_revenue = sum(inv.get("amount", 0) for inv in project_invoices if inv.get("status") == "paid")
+        
+        projects_info.append({
+            "id": project.get("id"),
+            "name": project.get("name"),
+            "status": project.get("status"),
+            "budget": project.get("budget", 0),
+            "revenue": project_revenue
+        })
+    
+    return {
+        "manager_name": manager_name,
+        "total_projects": total_projects,
+        "total_revenue": total_revenue,
+        "monthly_revenue": monthly_revenue,
+        "average_check": average_check,
+        "pending_payments": pending_payments,
+        "overdue_payments": overdue_payments,
+        "total_invoices": total_invoices,
+        "paid_invoices": paid_invoices,
+        "projects": projects_info
+    }
+
