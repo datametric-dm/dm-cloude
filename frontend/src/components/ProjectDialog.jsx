@@ -19,11 +19,21 @@ export default function ProjectDialog({ project, isOpen, onClose }) {
     'создание сайта'
   ];
 
-  // Состояние для направлений с бюджетами
+  // Доступные проект-менеджеры
+  const projectManagers = [
+    'Прыгункова Елена',
+    'Гарасюта Александр'
+  ];
+
+  // Состояние для направлений с бюджетами и датами
   const [directions, setDirections] = useState(
     project?.directions?.length > 0 
-      ? project.directions 
-      : [{ name: '', budget: '' }]
+      ? project.directions.map(d => ({
+          ...d,
+          start_date: d.start_date ? new Date(d.start_date).toISOString().split('T')[0] : '',
+          end_date: d.end_date ? new Date(d.end_date).toISOString().split('T')[0] : ''
+        }))
+      : [{ name: '', budget: '', start_date: '', end_date: '' }]
   );
 
   // Получаем список клиентов для выбора
