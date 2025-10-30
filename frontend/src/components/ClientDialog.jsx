@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { X } from 'lucide-react';
+import { X, Plus, Trash2 } from 'lucide-react';
 import { clientsApi } from '../lib/api';
 import { toast } from 'sonner';
 
@@ -9,47 +9,40 @@ export default function ClientDialog({ client, isOpen, onClose }) {
   const queryClient = useQueryClient();
   const isEditing = !!client;
 
+  // Состояние для контактных лиц
+  const [contacts, setContacts] = useState(
+    client?.contacts || [{ name: '', position: '', phone: '', email: '' }]
+  );
+
   const { register, handleSubmit, reset, formState: { errors } } = useForm({
     defaultValues: client || {
       name: '',
-      company: '',
       email: '',
       phone: '',
       address: '',
       inn: '',
       kpp: '',
       ogrn: '',
-      bank_name: '',
-      bank_account: '',
-      bank_bik: '',
-      contact_person: '',
-      contact_position: '',
-      contact_phone: '',
-      contact_email: '',
+      edo: '',
       notes: '',
     },
   });
 
   React.useEffect(() => {
     if (isOpen) {
-      reset(client || {
+      const defaultValues = client || {
         name: '',
-        company: '',
         email: '',
         phone: '',
         address: '',
         inn: '',
         kpp: '',
         ogrn: '',
-        bank_name: '',
-        bank_account: '',
-        bank_bik: '',
-        contact_person: '',
-        contact_position: '',
-        contact_phone: '',
-        contact_email: '',
+        edo: '',
         notes: '',
-      });
+      };
+      reset(defaultValues);
+      setContacts(client?.contacts || [{ name: '', position: '', phone: '', email: '' }]);
     }
   }, [isOpen, client, reset]);
 
