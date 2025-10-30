@@ -395,6 +395,32 @@ export default function ProjectDialog({ project, isOpen, onClose }) {
                         data-testid={`direction-${index}-budget-input`}
                       />
                     </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Дата старта направления
+                      </label>
+                      <input
+                        type="date"
+                        value={direction.start_date}
+                        onChange={(e) => updateDirection(index, 'start_date', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        data-testid={`direction-${index}-start-date-input`}
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Дата остановки направления
+                      </label>
+                      <input
+                        type="date"
+                        value={direction.end_date}
+                        onChange={(e) => updateDirection(index, 'end_date', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        data-testid={`direction-${index}-end-date-input`}
+                      />
+                    </div>
                   </div>
                 </div>
               ))}
