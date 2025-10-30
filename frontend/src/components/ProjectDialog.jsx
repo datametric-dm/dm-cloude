@@ -1,13 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
-import { X, Calendar } from 'lucide-react';
+import { X, Plus, Trash2 } from 'lucide-react';
 import { projectsApi, clientsApi } from '../lib/api';
 import { toast } from 'sonner';
 
 export default function ProjectDialog({ project, isOpen, onClose }) {
   const queryClient = useQueryClient();
   const isEditing = !!project;
+
+  // Доступные направления
+  const availableDirections = [
+    'продвижение',
+    'аналитика',
+    'внедрение CRM',
+    'интеграция CRM и МИС',
+    'колл-центр',
+    'создание сайта'
+  ];
+
+  // Состояние для направлений с бюджетами
+  const [directions, setDirections] = useState(
+    project?.directions?.length > 0 
+      ? project.directions 
+      : [{ name: '', budget: '' }]
+  );
 
   // Получаем список клиентов для выбора
   const { data: clientsData } = useQuery({
@@ -22,7 +39,6 @@ export default function ProjectDialog({ project, isOpen, onClose }) {
       description: '',
       client_id: '',
       status: 'planning',
-      budget: '',
       start_date: '',
       end_date: '',
       brief: '',
@@ -38,13 +54,11 @@ export default function ProjectDialog({ project, isOpen, onClose }) {
         ...project,
         start_date: project.start_date ? new Date(project.start_date).toISOString().split('T')[0] : '',
         end_date: project.end_date ? new Date(project.end_date).toISOString().split('T')[0] : '',
-        budget: project.budget?.toString() || '',
       } : {
         name: '',
         description: '',
         client_id: '',
         status: 'planning',
-        budget: '',
         start_date: '',
         end_date: '',
         brief: '',
@@ -53,6 +67,11 @@ export default function ProjectDialog({ project, isOpen, onClose }) {
         notes: '',
       };
       reset(defaultValues);
+      setDirections(
+        project?.directions?.length > 0 
+          ? project.directions 
+          : [{ name: '', budget: '' }]
+      );
     }
   }, [isOpen, project, reset]);
 
