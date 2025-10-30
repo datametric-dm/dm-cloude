@@ -8,7 +8,13 @@ import uuid
 
 router = APIRouter(prefix="/clients")
 
-# Pydantic схемы
+# Pydantic схемы для контактного лица
+class ContactPerson(BaseModel):
+    name: Optional[str] = None
+    position: Optional[str] = None
+    phone: Optional[str] = None
+    email: Optional[EmailStr] = None
+
 class ClientBase(BaseModel):
     name: str
     email: Optional[EmailStr] = None
@@ -17,8 +23,8 @@ class ClientBase(BaseModel):
     inn: Optional[str] = None
     kpp: Optional[str] = None
     ogrn: Optional[str] = None
-    contact_person: Optional[str] = None
-    contact_position: Optional[str] = None
+    edo: Optional[str] = None  # Система ЭДО
+    contacts: Optional[List[ContactPerson]] = []  # Множественные контактные лица
     notes: Optional[str] = None
 
 class ClientCreate(ClientBase):
