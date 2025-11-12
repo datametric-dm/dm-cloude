@@ -15,6 +15,15 @@ class ContactPerson(BaseModel):
     phone: Optional[str] = None
     email: Optional[EmailStr] = None
 
+# Pydantic схемы для подрядчиков/партнеров
+class Contractor(BaseModel):
+    name: str  # Название компании
+    work_area: Optional[str] = None  # Область работы
+    contact_person: Optional[str] = None  # Контактное лицо
+    phone: Optional[str] = None
+    email: Optional[EmailStr] = None
+    notes: Optional[str] = None  # Примечания
+
 class ClientBase(BaseModel):
     name: str
     email: Optional[EmailStr] = None
