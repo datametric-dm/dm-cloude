@@ -49,11 +49,14 @@ class ProjectRead(BaseModel):
     client_id: str
     description: Optional[str] = None
     status: str = "planning"
+    priority: Optional[int] = 3
     start_date: Optional[datetime] = None  # Изменено на datetime для совместимости с MongoDB
     end_date: Optional[datetime] = None  # Изменено на datetime для совместимости с MongoDB
     budget: Optional[float] = 0.0
     directions: Optional[List[ProjectDirection]] = []  # Направления с бюджетами
     project_manager: Optional[str] = None  # Проект-менеджер
+    connected_services: Optional[List[str]] = []
+    development_zones: Optional[List[str]] = []
     # Детальная информация проекта
     brief: Optional[str] = None
     requirements: Optional[str] = None
