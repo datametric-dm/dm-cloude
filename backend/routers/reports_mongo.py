@@ -9,6 +9,9 @@ router = APIRouter(prefix="/reports")
 
 class DashboardStats(BaseModel):
     total_clients: int
+    active_clients: int  # Активные клиенты
+    suspended_clients: int  # Приостановлены
+    churned_clients: int  # Отвалились
     active_projects: int
     total_projects: int
     total_revenue: float
