@@ -539,6 +539,119 @@ export default function Reports() {
           </div>
         )}
       </div>
+
+      {/* Анализ оттока клиентов (Churn Analysis) */}
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-6">Анализ оттока клиентов</h3>
+        
+        {/* Фильтры */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Период группировки</label>
+            <select
+              value={churnPeriod}
+              onChange={(e) => setChurnPeriod(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="monthly">По месяцам</option>
+              <option value="yearly">По годам</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Количество периодов</label>
+            <select
+              value={churnMonths}
+              onChange={(e) => setChurnMonths(Number(e.target.value))}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value={6}>6 периодов</option>
+              <option value={12}>12 периодов</option>
+              <option value={24}>24 периода</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Результаты */}
+        {churnLoading ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          </div>
+        ) : churnData ? (
+          <div className="space-y-6">
+            {/* Общая статистика */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+                <p className="text-sm font-medium text-green-900">Новых клиентов</p>
+                <p className="text-2xl font-bold text-green-700 mt-2">{churnData.total_new}</p>
+              </div>
+              
+              <div className="bg-red-50 rounded-lg p-4 border border-red-200">
+                <p className="text-sm font-medium text-red-900">Отвалились</p>
+                <p className="text-2xl font-bold text-red-700 mt-2">{churnData.total_churned}</p>
+              </div>
+              
+              <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
+                <p className="text-sm font-medium text-yellow-900">Приостановлены</p>
+                <p className="text-2xl font-bold text-yellow-700 mt-2">{churnData.total_suspended}</p>
+              </div>
+              
+              <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                <p className="text-sm font-medium text-blue-900">Процент оттока</p>
+                <p className="text-2xl font-bold text-blue-700 mt-2">{churnData.churn_rate}%</p>
+              </div>
+            </div>
+
+            {/* График */}
+            {churnData.data && churnData.data.length > 0 && (
+              <div className="bg-gray-50 rounded-lg p-4">
+                <h4 className="text-md font-semibold text-gray-900 mb-4">Динамика по периодам</h4>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={churnData.data}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="period" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="new_clients" fill="#10b981" name="Новые" />
+                    <Bar dataKey="churned_clients" fill="#ef4444" name="Отвалились" />
+                    <Bar dataKey="suspended_clients" fill="#f59e0b" name="Приостановлены" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            )}
+
+            {/* Таблица детализации */}
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Период</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Новые</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Отвалились</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Приостановлены</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Рост</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {churnData.data?.map((row, index) => (
+                    <tr key={index}>
+                      <td className="px-4 py-3 text-sm text-gray-900">{row.period}</td>
+                      <td className="px-4 py-3 text-sm font-semibold text-green-600">{row.new_clients}</td>
+                      <td className="px-4 py-3 text-sm font-semibold text-red-600">{row.churned_clients}</td>
+                      <td className="px-4 py-3 text-sm font-semibold text-yellow-600">{row.suspended_clients}</td>
+                      <td className="px-4 py-3 text-sm font-semibold">
+                        <span className={row.net_growth >= 0 ? 'text-green-600' : 'text-red-600'}>
+                          {row.net_growth >= 0 ? '+' : ''}{row.net_growth}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 }
