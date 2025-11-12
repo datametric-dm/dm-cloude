@@ -402,3 +402,98 @@ async def get_manager_report(
         "projects": projects_info
     }
 
+
+# Схема для отчета по оттоку клиентов (churn analysis)
+class ChurnReport(BaseModel):
+    period: str  # monthly, yearly
+    data: List[Dict[str, Any]]  # [{period: "2025-10", new_clients: 5, churned_clients: 2, suspended_clients: 1}]
+    total_new: int
+    total_churned: int
+    total_suspended: int
+    churn_rate: float  # Процент оттока
+
+@router.get("/churn-analysis", response_model=ChurnReport)
+async def get_churn_analysis(
+    period: str = Query(default="monthly", regex="^(monthly|yearly)$"),
+    months: int = Query(default=12, ge=1, le=60),
+    current_user = Depends(get_current_user),
+    db = Depends(get_db)
+):
+    """Получить отчет по оттоку клиентов"""
+    from datetime import datetime, timedelta
+    from collections import defaultdict
+    
+    # Получаем всех клиентов
+    all_clients = list(clients_collection.find({}))
+    
+    # Группируем по периодам
+    period_data = defaultdict(lambda: {"new_clients": 0, "churned_clients": 0, "suspended_clients": 0})
+    
+    for client in all_clients:
+        created_at = client.get("created_at")
+        updated_at = client.get("updated_at")
+        status = client.get("status", "active")
+        
+        if created_at:
+            if isinstance(created_at, str):
+                created_at = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
+            
+            # Определяем период
+            if period == "monthly":
+                period_key = created_at.strftime("%Y-%m")
+            else:
+                period_key = created_at.strftime("%Y")
+            
+            period_data[period_key]["new_clients"] += 1
+        
+        # Если клиент отвалился или приостановлен, смотрим когда это произошло
+        if status in ["churned", "suspended"] and updated_at:
+            if isinstance(updated_at, str):
+                updated_at = datetime.fromisoformat(updated_at.replace('Z', '+00:00'))
+            
+            if period == "monthly":
+                period_key = updated_at.strftime("%Y-%m")
+            else:
+                period_key = updated_at.strftime("%Y")
+            
+            if status == "churned":
+                period_data[period_key]["churned_clients"] += 1
+            else:
+                period_data[period_key]["suspended_clients"] += 1
+    
+    # Сортируем периоды и ограничиваем количество
+    sorted_periods = sorted(period_data.keys(), reverse=True)[:months]
+    sorted_periods.reverse()  # От старых к новым
+    
+    # Формируем результат
+    result_data = []
+    total_new = 0
+    total_churned = 0
+    total_suspended = 0
+    
+    for period_key in sorted_periods:
+        data = period_data[period_key]
+        total_new += data["new_clients"]
+        total_churned += data["churned_clients"]
+        total_suspended += data["suspended_clients"]
+        
+        result_data.append({
+            "period": period_key,
+            "new_clients": data["new_clients"],
+            "churned_clients": data["churned_clients"],
+            "suspended_clients": data["suspended_clients"],
+            "net_growth": data["new_clients"] - data["churned_clients"]
+        })
+    
+    # Рассчитываем процент оттока
+    churn_rate = (total_churned / total_new * 100) if total_new > 0 else 0
+    
+    return {
+        "period": period,
+        "data": result_data,
+        "total_new": total_new,
+        "total_churned": total_churned,
+        "total_suspended": total_suspended,
+        "churn_rate": round(churn_rate, 2)
+    }
+
