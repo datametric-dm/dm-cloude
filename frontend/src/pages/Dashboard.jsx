@@ -71,12 +71,31 @@ export default function Dashboard() {
 
       {/* Основные метрики */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatsCard
-          title="Всего клиентов"
-          value={dashboardStats?.total_clients || 0}
-          icon={Users}
-          data-testid="total-clients-card"
-        />
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-medium text-gray-600">Клиенты</h3>
+            <Users className="w-5 h-5 text-blue-600" />
+          </div>
+          <div className="space-y-2">
+            <div className="text-2xl font-bold text-gray-900">
+              {dashboardStats?.total_clients || 0}
+            </div>
+            <div className="text-xs space-y-1">
+              <div className="flex justify-between">
+                <span className="text-green-600">● Активные</span>
+                <span className="font-medium">{dashboardStats?.active_clients || 0}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-yellow-600">● Приостановлены</span>
+                <span className="font-medium">{dashboardStats?.suspended_clients || 0}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-red-600">● Отвалились</span>
+                <span className="font-medium">{dashboardStats?.churned_clients || 0}</span>
+              </div>
+            </div>
+          </div>
+        </div>
         
         <StatsCard
           title="Активные проекты"
