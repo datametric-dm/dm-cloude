@@ -36,6 +36,16 @@ export default function ProjectDialog({ project, isOpen, onClose }) {
       : [{ name: '', budget: '', start_date: '', end_date: '' }]
   );
 
+  // Состояние для подключенных услуг
+  const [connectedServices, setConnectedServices] = useState(
+    project?.connected_services || []
+  );
+
+  // Состояние для зон развития
+  const [developmentZones, setDevelopmentZones] = useState(
+    project?.development_zones || []
+  );
+
   // Получаем список клиентов для выбора
   const { data: clientsData } = useQuery({
     queryKey: ['clients-for-select'],
