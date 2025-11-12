@@ -357,6 +357,114 @@ export default function ClientDialog({ client, isOpen, onClose }) {
               ))}
             </div>
 
+            {/* Подрядчики и партнеры */}
+            <div className="border-t pt-4">
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="text-md font-medium text-gray-900">Подрядчики и партнеры</h4>
+                <button
+                  type="button"
+                  onClick={addContractor}
+                  className="flex items-center gap-1 px-3 py-1 text-sm bg-green-50 text-green-600 rounded-md hover:bg-green-100 transition-colors"
+                  data-testid="add-contractor-btn"
+                >
+                  <Plus className="w-4 h-4" />
+                  Добавить подрядчика
+                </button>
+              </div>
+              
+              {contractors.map((contractor, index) => (
+                <div key={index} className="mb-4 p-4 border border-gray-200 rounded-md bg-gray-50">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-sm font-medium text-gray-700">Подрядчик #{index + 1}</span>
+                    <button
+                      type="button"
+                      onClick={() => removeContractor(index)}
+                      className="text-red-500 hover:text-red-700"
+                      data-testid={`remove-contractor-${index}-btn`}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Название компании *
+                      </label>
+                      <input
+                        value={contractor.name}
+                        onChange={(e) => updateContractor(index, 'name', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        data-testid={`contractor-${index}-name-input`}
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Область работы
+                      </label>
+                      <input
+                        value={contractor.work_area}
+                        onChange={(e) => updateContractor(index, 'work_area', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        data-testid={`contractor-${index}-work-area-input`}
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Контактное лицо
+                      </label>
+                      <input
+                        value={contractor.contact_person}
+                        onChange={(e) => updateContractor(index, 'contact_person', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        data-testid={`contractor-${index}-contact-person-input`}
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Телефон
+                      </label>
+                      <input
+                        value={contractor.phone}
+                        onChange={(e) => updateContractor(index, 'phone', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        data-testid={`contractor-${index}-phone-input`}
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Email
+                      </label>
+                      <input
+                        type="email"
+                        value={contractor.email}
+                        onChange={(e) => updateContractor(index, 'email', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        data-testid={`contractor-${index}-email-input`}
+                      />
+                    </div>
+                    
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Примечания
+                      </label>
+                      <textarea
+                        value={contractor.notes}
+                        onChange={(e) => updateContractor(index, 'notes', e.target.value)}
+                        rows={2}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        data-testid={`contractor-${index}-notes-textarea`}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
             {/* Примечания */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
