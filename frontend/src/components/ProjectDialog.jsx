@@ -81,6 +81,7 @@ export default function ProjectDialog({ project, isOpen, onClose }) {
         description: '',
         client_id: '',
         status: 'planning',
+        priority: 3,
         project_manager: '',
         start_date: '',
         end_date: '',
@@ -99,6 +100,8 @@ export default function ProjectDialog({ project, isOpen, onClose }) {
             }))
           : [{ name: '', budget: '', start_date: '', end_date: '' }]
       );
+      setConnectedServices(project?.connected_services || []);
+      setDevelopmentZones(project?.development_zones || []);
     }
   }, [isOpen, project, reset]);
 
