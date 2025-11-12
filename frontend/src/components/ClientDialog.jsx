@@ -166,6 +166,22 @@ export default function ClientDialog({ client, isOpen, onClose }) {
               </div>
             </div>
 
+            {/* Статус */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Статус клиента
+              </label>
+              <select
+                {...register('status')}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                data-testid="client-status-select"
+              >
+                <option value="active">Активный</option>
+                <option value="suspended">Приостановлен (временно не работаем)</option>
+                <option value="churned">Отвалился (прекратил сотрудничество)</option>
+              </select>
+            </div>
+
             {/* Контакты */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
