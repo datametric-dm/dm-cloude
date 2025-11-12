@@ -14,6 +14,11 @@ export default function ClientDialog({ client, isOpen, onClose }) {
     client?.contacts || [{ name: '', position: '', phone: '', email: '' }]
   );
 
+  // Состояние для подрядчиков/партнеров
+  const [contractors, setContractors] = useState(
+    client?.contractors || []
+  );
+
   const { register, handleSubmit, reset, formState: { errors } } = useForm({
     defaultValues: client || {
       name: '',
@@ -24,6 +29,7 @@ export default function ClientDialog({ client, isOpen, onClose }) {
       kpp: '',
       ogrn: '',
       edo: '',
+      status: 'active',
       notes: '',
     },
   });
@@ -39,10 +45,12 @@ export default function ClientDialog({ client, isOpen, onClose }) {
         kpp: '',
         ogrn: '',
         edo: '',
+        status: 'active',
         notes: '',
       };
       reset(defaultValues);
       setContacts(client?.contacts || [{ name: '', position: '', phone: '', email: '' }]);
+      setContractors(client?.contractors || []);
     }
   }, [isOpen, client, reset]);
 
