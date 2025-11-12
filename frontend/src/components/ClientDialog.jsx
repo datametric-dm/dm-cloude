@@ -71,6 +71,21 @@ export default function ClientDialog({ client, isOpen, onClose }) {
     setContacts(newContacts);
   };
 
+  // Функции для управления подрядчиками
+  const addContractor = () => {
+    setContractors([...contractors, { name: '', work_area: '', contact_person: '', phone: '', email: '', notes: '' }]);
+  };
+
+  const removeContractor = (index) => {
+    setContractors(contractors.filter((_, i) => i !== index));
+  };
+
+  const updateContractor = (index, field, value) => {
+    const newContractors = [...contractors];
+    newContractors[index][field] = value;
+    setContractors(newContractors);
+  };
+
   const mutation = useMutation({
     mutationFn: (data) => {
       if (isEditing) {
