@@ -24,11 +24,14 @@ class ClientBase(BaseModel):
     kpp: Optional[str] = None
     ogrn: Optional[str] = None
     edo: Optional[str] = None  # Система ЭДО (новое поле)
+    status: Optional[str] = "active"  # active, suspended, churned (Приостановлен, Отвалился)
     # Старые поля контактов (для обратной совместимости)
     contact_person: Optional[str] = None
     contact_position: Optional[str] = None
     # Новое поле - множественные контакты
     contacts: Optional[List[ContactPerson]] = []
+    # Подрядчики и партнеры
+    contractors: Optional[List['Contractor']] = []
     notes: Optional[str] = None
 
 class ClientCreate(ClientBase):
