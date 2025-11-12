@@ -119,6 +119,11 @@ export default function ClientDialog({ client, isOpen, onClose }) {
       contact.name || contact.position || contact.phone || contact.email
     );
     
+    // Добавляем подрядчиков (фильтруем пустые)
+    cleanData.contractors = contractors.filter(contractor => 
+      contractor.name
+    );
+    
     mutation.mutate(cleanData);
   };
 
