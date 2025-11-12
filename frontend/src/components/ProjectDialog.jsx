@@ -155,6 +155,7 @@ export default function ProjectDialog({ project, isOpen, onClose }) {
       ...data,
       start_date: data.start_date || null,
       end_date: data.end_date || null,
+      priority: parseInt(data.priority) || 3,
     };
     
     // Добавляем направления (фильтруем пустые)
@@ -162,10 +163,16 @@ export default function ProjectDialog({ project, isOpen, onClose }) {
       .filter(dir => dir.name && dir.name.trim())
       .map(dir => ({
         name: dir.name,
-        budget: parseFloat(dir.budget) || 0
+        budget: parseFloat(dir.budget) || 0,
+        start_date: dir.start_date || null,
+        end_date: dir.end_date || null
       }));
     
     cleanData.directions = validDirections;
+    
+    // Добавляем подключенные услуги и зоны развития
+    cleanData.connected_services = connectedServices.filter(s => s.trim());
+    cleanData.development_zones = developmentZones.filter(z => z.trim());
     
     // Убираем пустые строки
     Object.keys(cleanData).forEach(key => {
