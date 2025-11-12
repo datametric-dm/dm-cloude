@@ -65,6 +65,22 @@ export default function Reports() {
     enabled: !!filterType,
   });
 
+  // Churn Analysis данные
+  const [churnPeriod, setChurnPeriod] = React.useState('monthly');
+  const [churnMonths, setChurnMonths] = React.useState(12);
+  
+  const { data: churnData, isLoading: churnLoading } = useQuery({
+    queryKey: ['churn-analysis', churnPeriod, churnMonths],
+    queryFn: async () => {
+      const baseUrl = process.env.REACT_APP_BACKEND_URL;
+      const token = localStorage.getItem('token') || 'dummy-token';
+      const res = await fetch(`${baseUrl}/api/reports/churn-analysis?period=${churnPeriod}&months=${churnMonths}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      return await res.json();
+    },
+  });
+
   const sendReportMutation = useMutation({
     mutationFn: telegramApi.sendDailyReport,
     onSuccess: () => {
