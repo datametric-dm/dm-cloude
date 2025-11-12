@@ -59,6 +59,7 @@ export default function ProjectDialog({ project, isOpen, onClose }) {
       description: '',
       client_id: '',
       status: 'planning',
+      priority: 3,
       project_manager: '',
       start_date: '',
       end_date: '',
