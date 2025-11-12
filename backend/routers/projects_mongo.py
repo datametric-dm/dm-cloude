@@ -20,11 +20,15 @@ class ProjectBase(BaseModel):
     client_id: str
     description: Optional[str] = None
     status: str = "planning"  # planning, in_progress, completed, cancelled
+    priority: Optional[int] = 3  # Приоритет 1-5 (1 - самый высокий)
     start_date: Optional[date] = None
     end_date: Optional[date] = None
     budget: Optional[float] = 0.0  # Общий бюджет (вычисляется автоматически)
     directions: Optional[List[ProjectDirection]] = []  # Направления с бюджетами
     project_manager: Optional[str] = None  # Проект-менеджер (Прыгункова Елена, Гарасюта Александр)
+    # Услуги и зоны развития
+    connected_services: Optional[List[str]] = []  # Подключенные услуги
+    development_zones: Optional[List[str]] = []  # Зоны для развития
     # Детальная информация проекта
     brief: Optional[str] = None
     requirements: Optional[str] = None
