@@ -42,8 +42,12 @@ async def get_dashboard_stats(
 ):
     """Получить статистику для дашборда"""
     
-    # Подсчитываем статистику
+    # Подсчитываем статистику клиентов по статусам
     total_clients = clients_collection.count_documents({})
+    active_clients = clients_collection.count_documents({"status": "active"})
+    suspended_clients = clients_collection.count_documents({"status": "suspended"})
+    churned_clients = clients_collection.count_documents({"status": "churned"})
+    
     total_projects = projects_collection.count_documents({})
     active_projects = projects_collection.count_documents({"status": {"$in": ["in_progress", "planning"]}})
     pending_invoices = invoices_collection.count_documents({"status": {"$in": ["draft", "sent"]}})
@@ -65,6 +69,9 @@ async def get_dashboard_stats(
     
     return {
         "total_clients": total_clients,
+        "active_clients": active_clients,
+        "suspended_clients": suspended_clients,
+        "churned_clients": churned_clients,
         "total_projects": total_projects,
         "active_projects": active_projects,
         "total_revenue": total_revenue,
