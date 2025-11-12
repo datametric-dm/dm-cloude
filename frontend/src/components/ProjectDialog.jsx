@@ -470,6 +470,80 @@ export default function ProjectDialog({ project, isOpen, onClose }) {
               ))}
             </div>
 
+            {/* Подключенные услуги */}
+            <div className="border-t pt-4">
+              <h4 className="text-md font-medium text-gray-900 mb-3">Подключенные услуги</h4>
+              <div className="space-y-2">
+                {connectedServices.map((service, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <input
+                      value={service}
+                      onChange={(e) => {
+                        const updated = [...connectedServices];
+                        updated[index] = e.target.value;
+                        setConnectedServices(updated);
+                      }}
+                      placeholder="Название услуги"
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      data-testid={`service-${index}-input`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setConnectedServices(connectedServices.filter((_, i) => i !== index))}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => setConnectedServices([...connectedServices, ''])}
+                  className="flex items-center gap-1 px-3 py-1 text-sm bg-green-50 text-green-600 rounded-md hover:bg-green-100 transition-colors"
+                >
+                  <Plus className="w-4 h-4" />
+                  Добавить услугу
+                </button>
+              </div>
+            </div>
+
+            {/* Зоны для развития */}
+            <div className="border-t pt-4">
+              <h4 className="text-md font-medium text-gray-900 mb-3">Зоны для развития</h4>
+              <div className="space-y-2">
+                {developmentZones.map((zone, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <input
+                      value={zone}
+                      onChange={(e) => {
+                        const updated = [...developmentZones];
+                        updated[index] = e.target.value;
+                        setDevelopmentZones(updated);
+                      }}
+                      placeholder="Название зоны развития"
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      data-testid={`zone-${index}-input`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setDevelopmentZones(developmentZones.filter((_, i) => i !== index))}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => setDevelopmentZones([...developmentZones, ''])}
+                  className="flex items-center gap-1 px-3 py-1 text-sm bg-purple-50 text-purple-600 rounded-md hover:bg-purple-100 transition-colors"
+                >
+                  <Plus className="w-4 h-4" />
+                  Добавить зону
+                </button>
+              </div>
+            </div>
+
             {/* Детальная информация */}
             <div className="space-y-4">
               <div>
