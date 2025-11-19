@@ -11,7 +11,7 @@ import {
   User,
   AlertCircle
 } from 'lucide-react';
-import api from '../lib/api';
+import { api } from '../lib/api';
 
 const ProjectFlow = () => {
   const queryClient = useQueryClient();
