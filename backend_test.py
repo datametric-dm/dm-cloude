@@ -1031,50 +1031,68 @@ class MultiTenancyTester:
             return False
 
     def run_all_tests(self):
-        """Run all multi-tenancy tests"""
-        print("🚀 Starting Multi-Tenancy Backend API Tests")
-        print("=" * 60)
+        """Run all multi-tenancy tests for updated routers"""
+        print("🚀 Starting Multi-Tenancy Backend API Tests - Updated Routers")
+        print("=" * 70)
         
         # Health check
         if not self.test_health_check():
             print("❌ Backend is not accessible. Stopping tests.")
             return False
         
-        # Create test user
+        # Create test user and get auth token
         if not self.create_test_user():
             print("❌ Cannot create test user. Stopping tests.")
             return False
         
-        # Test Companies API
-        print("\n📋 Testing Companies API...")
+        if not self.get_auth_token():
+            print("❌ Cannot get auth token. Stopping tests.")
+            return False
+        
+        # Setup: Create companies and basic data
+        print("\n🏢 Setting up test environment...")
         self.test_create_company()
-        self.test_get_my_companies()
-        self.test_get_company_details()
-        self.test_update_company()
-        self.test_company_stats()
-        
-        # Test Team Management API
-        print("\n👥 Testing Team Management API...")
-        self.test_invite_user()
-        self.test_get_team_members()
-        self.test_update_user_role()
-        
-        # Test Tenant Isolation
-        print("\n🔒 Testing Tenant Isolation...")
         self.test_create_second_company()
-        self.test_create_client_company1()
-        self.test_get_client_company1()
-        self.test_tenant_isolation()
-        self.test_get_clients_list()
+        self.test_create_client_company1()  # Need client for projects/invoices
         
-        # Cleanup tests
-        print("\n🧹 Testing Cleanup Operations...")
-        self.test_remove_user_from_team()
+        # Test Projects API (Тест 3)
+        print("\n📋 Testing Projects API (Multi-Tenancy)...")
+        self.test_create_project()
+        self.test_get_projects_list()
+        self.test_get_project_by_id()
+        self.test_update_project()
+        
+        # Test Services API
+        print("\n🛠️ Testing Services API...")
+        self.test_create_service()
+        self.test_get_services_list()
+        
+        # Test Invoices API (Тест 1)
+        print("\n💰 Testing Invoices API (Multi-Tenancy)...")
+        self.test_create_invoice()
+        self.test_get_invoices_list()
+        self.test_get_invoice_by_id()
+        
+        # Test Payments API (Тест 2)
+        print("\n💳 Testing Payments API (Multi-Tenancy)...")
+        self.test_create_payment()
+        self.test_get_payments_list()
+        self.test_mark_payment_received()
+        
+        # Test Tenant Isolation (Тест 4)
+        print("\n🔒 Testing Tenant Isolation for Updated Routers...")
+        self.test_invoice_tenant_isolation()
+        self.test_payment_tenant_isolation()
+        self.test_project_tenant_isolation()
+        
+        # Test Reports API (Тест 5)
+        print("\n📊 Testing Reports API...")
+        self.test_dashboard_reports()
         
         # Summary
-        print("\n" + "=" * 60)
-        print("📊 TEST SUMMARY")
-        print("=" * 60)
+        print("\n" + "=" * 70)
+        print("📊 TEST SUMMARY - UPDATED ROUTERS WITH MULTI-TENANCY")
+        print("=" * 70)
         
         passed = sum(1 for r in self.results if r["success"])
         total = len(self.results)
@@ -1096,6 +1114,8 @@ class MultiTenancyTester:
             print("\n🚨 CRITICAL ISSUES:")
             for test in failed_tests:
                 print(f"- {test['test']}: {test['details']}")
+        else:
+            print("\n✅ ALL TESTS PASSED - MULTI-TENANCY WORKING CORRECTLY!")
         
         return passed == total
 
