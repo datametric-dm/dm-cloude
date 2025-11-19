@@ -49,6 +49,7 @@ function App() {
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/clients" element={<ClientsPage />} />
                         <Route path="/projects" element={<ProjectsPage />} />
+                        <Route path="/project-flow" element={<ProjectFlow />} />
                         <Route path="/invoices" element={<InvoicesPage />} />
                         <Route path="/payments" element={<PaymentsPage />} />
                         <Route path="/reports" element={<ReportsPage />} />
