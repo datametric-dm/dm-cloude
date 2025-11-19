@@ -377,3 +377,196 @@ async def get_accounting_config(
         config.pop("_id", None)
     
     return {"config": config}
+
+
+
+# ============= sCloud.ru Integration =============
+
+from services.scloud_service import SCloudAPIClient
+import secrets
+
+# Store OAuth states (in production, use Redis)
+oauth_states: Dict[str, Dict] = {}
+
+
+@router.get("/scloud/authorize")
+async def scloud_authorize(
+    current_user=Depends(get_current_user),
+    x_company_id: Optional[str] = Header(None, alias="X-Company-ID")
+):
+    """
+    Initiate OAuth 2.0 flow with sCloud.
+    Returns authorization URL for user to complete authentication.
+    """
+    if not x_company_id:
+        raise HTTPException(status_code=400, detail="X-Company-ID required")
+    
+    # Generate secure random state for CSRF protection
+    state = secrets.token_urlsafe(32)
+    
+    # Store state with company_id for validation
+    oauth_states[state] = {
+        "company_id": x_company_id,
+        "created_at": datetime.utcnow(),
+        "used": False
+    }
+    
+    # Get authorization URL
+    scloud_client = SCloudAPIClient()
+    auth_url = await scloud_client.get_authorization_url(state)
+    
+    return {
+        "authorization_url": auth_url,
+        "state": state
+    }
+
+
+@router.get("/scloud/callback")
+async def scloud_callback(
+    code: str,
+    state: str
+):
+    """
+    OAuth 2.0 callback from sCloud.
+    Exchanges authorization code for access/refresh tokens.
+    """
+    # Validate state parameter
+    if state not in oauth_states:
+        raise HTTPException(status_code=400, detail="Invalid state parameter")
+    
+    state_data = oauth_states[state]
+    if state_data["used"]:
+        raise HTTPException(status_code=400, detail="State parameter already used")
+    
+    # Mark state as used
+    oauth_states[state]["used"] = True
+    company_id = state_data["company_id"]
+    
+    try:
+        # Exchange code for tokens
+        scloud_client = SCloudAPIClient()
+        token_data = await scloud_client.exchange_code_for_token(code)
+        
+        # Store integration record
+        integration_record = {
+            "id": uuid4().hex,
+            "tenant_id": company_id,
+            "name": "sCloud Accounting",
+            "type": "accounting",
+            "provider": "scloud",
+            "status": "active",
+            "is_enabled": True,
+            "access_token": token_data.get("access_token"),
+            "refresh_token": token_data.get("refresh_token"),
+            "token_expiry": datetime.utcnow() + timedelta(seconds=token_data.get("expires_in", 3600)),
+            "created_at": datetime.utcnow(),
+            "updated_at": datetime.utcnow()
+        }
+        
+        # Check if integration already exists
+        existing = integrations_collection.find_one({
+            "tenant_id": company_id,
+            "provider": "scloud"
+        })
+        
+        if existing:
+            # Update existing integration
+            integrations_collection.update_one(
+                {"id": existing["id"]},
+                {"$set": integration_record}
+            )
+            integration_id = existing["id"]
+        else:
+            # Insert new integration
+            integrations_collection.insert_one(integration_record)
+            integration_id = integration_record["id"]
+        
+        return {
+            "message": "sCloud integration connected successfully",
+            "integration_id": integration_id,
+            "status": "active"
+        }
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to complete sCloud authentication: {str(e)}"
+        )
+
+
+@router.post("/scloud/{integration_id}/sync")
+async def sync_scloud_data(
+    integration_id: str,
+    current_user=Depends(get_current_user),
+    x_company_id: Optional[str] = Header(None, alias="X-Company-ID")
+):
+    """
+    Manually trigger sync of financial data from sCloud.
+    """
+    if not x_company_id:
+        raise HTTPException(status_code=400, detail="X-Company-ID required")
+    
+    # Get integration details
+    integration = integrations_collection.find_one({
+        "id": integration_id,
+        "tenant_id": x_company_id,
+        "provider": "scloud"
+    })
+    
+    if not integration:
+        raise HTTPException(status_code=404, detail="sCloud integration not found")
+    
+    # Initialize sCloud client with stored tokens
+    scloud_client = SCloudAPIClient()
+    scloud_client.access_token = integration.get("access_token")
+    scloud_client.refresh_token = integration.get("refresh_token")
+    scloud_client.token_expiry = integration.get("token_expiry")
+    
+    try:
+        # Sync invoices
+        invoices_data = await scloud_client.sync_invoices(x_company_id)
+        
+        # Sync transactions
+        transactions_data = await scloud_client.sync_transactions(x_company_id)
+        
+        # Log sync results
+        log_entry = {
+            "id": uuid4().hex,
+            "tenant_id": x_company_id,
+            "integration_id": integration_id,
+            "sync_type": "manual",
+            "started_at": datetime.utcnow(),
+            "completed_at": datetime.utcnow(),
+            "status": "completed",
+            "records_processed": len(invoices_data.get("items", [])) + len(transactions_data.get("items", [])),
+            "errors": []
+        }
+        integration_logs_collection.insert_one(log_entry)
+        
+        return {
+            "message": "Sync completed successfully",
+            "invoices_synced": len(invoices_data.get("items", [])),
+            "transactions_synced": len(transactions_data.get("items", [])),
+            "log_id": log_entry["id"]
+        }
+        
+    except Exception as e:
+        # Log error
+        log_entry = {
+            "id": uuid4().hex,
+            "tenant_id": x_company_id,
+            "integration_id": integration_id,
+            "sync_type": "manual",
+            "started_at": datetime.utcnow(),
+            "completed_at": datetime.utcnow(),
+            "status": "failed",
+            "records_processed": 0,
+            "errors": [str(e)]
+        }
+        integration_logs_collection.insert_one(log_entry)
+        
+        raise HTTPException(
+            status_code=500,
+            detail=f"Sync failed: {str(e)}"
+        )
+
