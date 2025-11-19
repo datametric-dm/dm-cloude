@@ -226,6 +226,81 @@ backend:
         agent: "main"
         comment: "Добавлены роутеры companies_mongo и team_mongo в server.py"
 
+  - task: "Invoices API Multi-tenancy - обновление для поддержки tenant_id"
+    implemented: true
+    working: true
+    file: "backend/routers/invoices_mongo.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Обновлены все endpoints для автоматической фильтрации и добавления tenant_id через header X-Company-ID"
+      - working: true
+        agent: "testing"
+        comment: "✅ ПОЛНОСТЬЮ ПРОТЕСТИРОВАНО: Все критические тесты пройдены. POST /invoices/ создает счет с tenant_id из X-Company-ID header. GET /invoices/ и GET /invoices/{id} фильтруют данные по tenant_id. Счета одной компании недоступны из другой компании (возвращает 404). Требует Bearer token и X-Company-ID header для аутентификации. Изоляция данных по компаниям работает корректно. Тест создания счета INV-001 на 50000 руб. прошел успешно."
+
+  - task: "Payments API Multi-tenancy - обновление для поддержки tenant_id"
+    implemented: true
+    working: true
+    file: "backend/routers/payments_mongo.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Обновлены все endpoints для автоматической фильтрации и добавления tenant_id через header X-Company-ID"
+      - working: true
+        agent: "testing"
+        comment: "✅ ПОЛНОСТЬЮ ПРОТЕСТИРОВАНО: Все критические тесты пройдены. POST /payments/ создает платеж с tenant_id из X-Company-ID header. GET /payments/ фильтрует данные по tenant_id. POST /payments/{id}/mark-received корректно обновляет статус на 'received'. Платежи одной компании недоступны из другой компании (возвращает 404). Изоляция данных по компаниям работает корректно. Тест создания платежа на 50000 руб. и отметки как полученного прошел успешно."
+
+  - task: "Projects API Multi-tenancy - обновление для поддержки tenant_id"
+    implemented: true
+    working: true
+    file: "backend/routers/projects_mongo.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Обновлены все endpoints для автоматической фильтрации и добавления tenant_id через header X-Company-ID"
+      - working: true
+        agent: "testing"
+        comment: "✅ ПОЛНОСТЬЮ ПРОТЕСТИРОВАНО: Все критические тесты пройдены. POST /projects/ создает проект с tenant_id из X-Company-ID header. GET /projects/ и GET /projects/{id} фильтруют данные по tenant_id. PUT /projects/{id} обновляет проекты с проверкой tenant_id. Проекты одной компании недоступны из другой компании (возвращает 404). Изоляция данных по компаниям работает корректно. Тест создания проекта 'Test Multi-Tenancy Project' с бюджетом 100000 руб. и обновления до 180000 руб. прошел успешно."
+
+  - task: "Services API Multi-tenancy - обновление для поддержки tenant_id"
+    implemented: true
+    working: true
+    file: "backend/routers/services_mongo.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Обновлены все endpoints для автоматической фильтрации и добавления tenant_id через header X-Company-ID"
+      - working: true
+        agent: "testing"
+        comment: "✅ ПОЛНОСТЬЮ ПРОТЕСТИРОВАНО: Все критические тесты пройдены. POST /services/ создает услугу с tenant_id из X-Company-ID header. GET /services/ фильтрует данные по tenant_id. GET /services/{id}, PUT /services/{id}, DELETE /services/{id} работают с проверкой tenant_id. Требует X-Company-ID header для всех операций. Изоляция данных по компаниям работает корректно. Тест создания услуги 'Test Marketing Service' по цене 25000 руб./месяц прошел успешно."
+
+  - task: "Reports API Multi-tenancy - обновление для поддержки tenant_id"
+    implemented: true
+    working: true
+    file: "backend/routers/reports_mongo.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Обновлены все endpoints для автоматической фильтрации данных по tenant_id через header X-Company-ID"
+      - working: true
+        agent: "testing"
+        comment: "✅ ПОЛНОСТЬЮ ПРОТЕСТИРОВАНО: Dashboard reports работает корректно. GET /reports/dashboard фильтрует все данные по tenant_id из X-Company-ID header. Возвращает корректную статистику: total_clients, active_projects, total_revenue, pending_invoices. Данные изолированы по компаниям. Тест показал: 1 клиент, 2 активных проекта, 0 руб. выручки, 1 ожидающий счет для тестовой компании."
+
 frontend:
   - task: "Company Context - React context для управления компаниями"
     implemented: true
