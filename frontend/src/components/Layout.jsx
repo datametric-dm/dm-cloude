@@ -23,6 +23,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 
 const navigation = [
   { name: 'Дашборд', href: '/dashboard', icon: LayoutDashboard },
+  { name: 'Owner Dashboard', href: '/owner-dashboard', icon: TrendingUp },
   { name: 'Клиенты', href: '/clients', icon: Users },
   { name: 'Проекты', href: '/projects', icon: FolderOpen },
   { name: 'Project Flow', href: '/project-flow', icon: FolderOpen },
