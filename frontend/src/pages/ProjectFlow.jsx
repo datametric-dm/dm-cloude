@@ -86,19 +86,26 @@ const ProjectFlow = () => {
     }
   });
 
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor)
+  );
+
   // Handle drag and drop
-  const onDragEnd = async (result) => {
-    const { source, destination, draggableId } = result;
+  const handleDragEnd = async (event) => {
+    const { active, over } = event;
 
-    if (!destination) return;
-    if (source.droppableId === destination.droppableId && source.index === destination.index) {
-      return;
-    }
+    if (!over) return;
 
-    const stage = stages.find(s => s.id === draggableId);
-    const targetColumn = columns.find(c => c.id === destination.droppableId);
+    const stageId = active.id;
+    const targetColumnId = over.id;
 
-    if (!stage || !targetColumn) return;
+    // If dropped on same column, ignore
+    const stage = stages.find(s => s.id === stageId);
+    if (!stage || stage.column_id === targetColumnId) return;
+
+    const targetColumn = columns.find(c => c.id === targetColumnId);
+    if (!targetColumn) return;
 
     // Update stage status
     try {
