@@ -32,6 +32,7 @@ routers = [
     try_import("routers.reports_mongo"),
     try_import("routers.files_mongo"),
     try_import("routers.telegram_mongo"),
+    try_import("routers.tasks_mongo"),
 ]
 
 for r in routers:
