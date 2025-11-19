@@ -427,3 +427,234 @@ async def get_usage_stats(
     }
     
     return {"usage": usage}
+
+
+
+# ============= Tinkoff Payment Integration =============
+
+from services.tinkoff_service import TinkoffAcquiringService
+
+tinkoff_service = TinkoffAcquiringService()
+
+
+class SubscriptionCreateRequest(BaseModel):
+    plan_id: str
+    billing_cycle: str  # monthly, quarterly, yearly
+
+
+@router.post("/subscription/create-payment")
+async def create_subscription_payment(
+    request: SubscriptionCreateRequest,
+    current_user=Depends(get_current_user),
+    x_company_id: Optional[str] = Header(None, alias="X-Company-ID"),
+    x_user_id: Optional[str] = Header(None, alias="X-User-ID")
+):
+    """
+    Create payment for new subscription using Tinkoff Acquiring.
+    Returns payment URL for customer to enter card details.
+    """
+    if not x_company_id:
+        raise HTTPException(status_code=400, detail="X-Company-ID required")
+    
+    # Get plan details
+    plan = subscription_plans_collection.find_one({"id": request.plan_id, "is_active": True})
+    if not plan:
+        raise HTTPException(status_code=404, detail="Plan not found")
+    
+    # Calculate amount based on billing cycle
+    price_key = f"{request.billing_cycle}_price"
+    amount_rubles = plan.get(price_key)
+    if amount_rubles is None:
+        raise HTTPException(status_code=400, detail=f"Invalid billing cycle: {request.billing_cycle}")
+    
+    # Convert to kopecks (1 RUB = 100 kopecks)
+    amount_kopecks = int(amount_rubles * 100)
+    
+    # Generate order ID
+    order_id = f"SUB_{x_company_id}_{uuid4().hex[:8]}"
+    
+    # Get company/user info for payment
+    company = companies_collection.find_one({"id": x_company_id})
+    company_name = company.get("name", "Company") if company else "Company"
+    
+    # Initialize payment with Tinkoff
+    try:
+        payment_response = await tinkoff_service.init_payment(
+            amount=amount_kopecks,
+            order_id=order_id,
+            customer_key=f"COMPANY_{x_company_id}",
+            description=f"Подписка {plan['name']} - {company_name}",
+            email=current_user.get("email", "noreply@example.com"),
+            recurrent=True  # Enable recurring payments
+        )
+        
+        if not payment_response.get("Success"):
+            raise HTTPException(
+                status_code=500, 
+                detail=f"Payment initialization failed: {payment_response.get('Message', 'Unknown error')}"
+            )
+        
+        # Store payment record
+        payment_record = {
+            "id": uuid4().hex,
+            "tenant_id": x_company_id,
+            "order_id": order_id,
+            "payment_id": payment_response.get("PaymentId"),
+            "plan_id": request.plan_id,
+            "billing_cycle": request.billing_cycle,
+            "amount_kopecks": amount_kopecks,
+            "amount_rubles": amount_rubles,
+            "status": "pending",
+            "created_at": datetime.utcnow(),
+            "created_by": x_user_id
+        }
+        billing_transactions_collection.insert_one(payment_record)
+        
+        return {
+            "payment_url": payment_response.get("PaymentURL"),
+            "payment_id": payment_response.get("PaymentId"),
+            "order_id": order_id,
+            "amount": amount_rubles
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to create payment: {str(e)}")
+
+
+@router.post("/webhook/tinkoff")
+async def tinkoff_webhook(
+    notification: dict
+):
+    """
+    Webhook endpoint for Tinkoff payment notifications.
+    Called by Tinkoff when payment status changes.
+    """
+    try:
+        # Validate webhook signature
+        signature = notification.get("Token")
+        if not signature:
+            raise HTTPException(status_code=400, detail="Missing Token")
+        
+        if not tinkoff_service.validate_webhook_signature(notification, signature):
+            logger.warning("Invalid webhook signature received")
+            raise HTTPException(status_code=400, detail="Invalid signature")
+        
+        # Extract payment details
+        payment_id = notification.get("PaymentId")
+        order_id = notification.get("OrderId")
+        status = notification.get("Status")
+        rebill_id = notification.get("RebillId")
+        
+        # Find payment record
+        payment = billing_transactions_collection.find_one({"payment_id": payment_id})
+        if not payment:
+            logger.warning(f"Payment not found: {payment_id}")
+            return {"status": "ignored"}
+        
+        # Update payment status
+        update_data = {
+            "status": status.lower() if status else "unknown",
+            "updated_at": datetime.utcnow()
+        }
+        
+        if status == "CONFIRMED":
+            update_data["confirmed_at"] = datetime.utcnow()
+            
+            # Store rebill ID for recurring payments
+            if rebill_id:
+                update_data["rebill_id"] = rebill_id
+            
+            # Activate subscription
+            existing_subscription = subscriptions_collection.find_one({"tenant_id": payment["tenant_id"]})
+            
+            if existing_subscription:
+                # Update existing subscription
+                subscriptions_collection.update_one(
+                    {"id": existing_subscription["id"]},
+                    {"$set": {
+                        "plan_id": payment["plan_id"],
+                        "plan_type": payment["plan_id"].replace("_plan", ""),
+                        "billing_cycle": payment["billing_cycle"],
+                        "status": "active",
+                        "rebill_id": rebill_id,
+                        "current_period_start": datetime.utcnow(),
+                        "current_period_end": datetime.utcnow() + timedelta(days=30),  # Default 30 days
+                        "updated_at": datetime.utcnow()
+                    }}
+                )
+            else:
+                # Create new subscription
+                new_subscription = {
+                    "id": uuid4().hex,
+                    "tenant_id": payment["tenant_id"],
+                    "plan_id": payment["plan_id"],
+                    "plan_type": payment["plan_id"].replace("_plan", ""),
+                    "billing_cycle": payment["billing_cycle"],
+                    "status": "active",
+                    "rebill_id": rebill_id,
+                    "current_period_start": datetime.utcnow(),
+                    "current_period_end": datetime.utcnow() + timedelta(days=30),
+                    "created_at": datetime.utcnow(),
+                    "updated_at": datetime.utcnow()
+                }
+                subscriptions_collection.insert_one(new_subscription)
+            
+            # Update company limits based on plan
+            plan = subscription_plans_collection.find_one({"id": payment["plan_id"]})
+            if plan:
+                companies_collection.update_one(
+                    {"id": payment["tenant_id"]},
+                    {"$set": {
+                        "subscription_plan": payment["plan_id"],
+                        "subscription_status": "active",
+                        "max_users": plan.get("max_users", 5),
+                        "max_projects": plan.get("max_projects", 10),
+                        "updated_at": datetime.utcnow()
+                    }}
+                )
+        
+        elif status == "DECLINED" or status == "REJECTED":
+            update_data["failed_at"] = datetime.utcnow()
+            update_data["error_message"] = notification.get("Message", "Payment declined")
+        
+        # Update payment record
+        billing_transactions_collection.update_one(
+            {"payment_id": payment_id},
+            {"$set": update_data}
+        )
+        
+        logger.info(f"Webhook processed successfully for payment {payment_id}: {status}")
+        return {"status": "ok"}
+        
+    except Exception as e:
+        logger.error(f"Webhook processing failed: {str(e)}")
+        raise HTTPException(status_code=500, detail="Webhook processing failed")
+
+
+@router.get("/payment/{payment_id}/status")
+async def get_payment_status(
+    payment_id: str,
+    current_user=Depends(get_current_user),
+    x_company_id: Optional[str] = Header(None, alias="X-Company-ID")
+):
+    """Get payment status from Tinkoff"""
+    if not x_company_id:
+        raise HTTPException(status_code=400, detail="X-Company-ID required")
+    
+    try:
+        # Get status from Tinkoff
+        status_response = await tinkoff_service.get_payment_state(payment_id)
+        
+        return {
+            "payment_id": payment_id,
+            "status": status_response.get("Status"),
+            "success": status_response.get("Success"),
+            "details": status_response
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get payment status: {str(e)}")
+
+
+import logging
+logger = logging.getLogger(__name__)
+
