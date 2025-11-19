@@ -166,11 +166,14 @@ backend:
     file: "backend/routers/team_mongo.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Реализованы endpoints: POST /team/invite (приглашение), GET /team (список команды), PUT /team/{user_id}/role, PUT /team/{user_id}/permissions, DELETE /team/{user_id}"
+      - working: true
+        agent: "testing"
+        comment: "✅ ПОЛНОСТЬЮ ПРОТЕСТИРОВАНО: Все endpoints работают корректно. POST /companies/{id}/team/invite создает пользователя если не существует и добавляет в команду с указанной ролью. GET /companies/{id}/team возвращает список участников команды с правами. PUT /companies/{id}/team/{user_id}/role обновляет роль пользователя. DELETE /companies/{id}/team/{user_id} удаляет пользователя из команды. Проверка лимитов пользователей и прав доступа работает."
 
   - task: "Tenant Middleware - middleware для автоматической фильтрации по tenant_id"
     implemented: true
