@@ -661,6 +661,31 @@ agent_communication:
         agent: "main"
         comment: "✅ РЕАЛИЗОВАНО: Интеграция Tinkoff Acquiring в billing API. Поддержка создания платежей для подписок, обработка webhook уведомлений, активация подписок после успешной оплаты. Recurring платежи готовы для автоматического списания"
 
+frontend:
+  - task: "Project Flow UI - Kanban доска"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/ProjectFlow.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "✅ РЕАЛИЗОВАНО: Полноценная Kanban доска с drag-and-drop. Компоненты: ProjectFlow page, StageDialog, интеграция с react-beautiful-dnd. Поддержка создания колонок, перемещения этапов, отображение прогресса, сроков, исполнителей. Добавлен route /project-flow и пункт меню"
+
+  - task: "Owner Dashboard UI - аналитический дашборд"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/OwnerDashboard.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "✅ РЕАЛИЗОВАНО: Продвинутый аналитический дашборд для владельца. Компоненты: KPI карточки (MRR, Проекты, Клиенты, Риски), графики (Financial Flow, Risk Distribution, Team Load, Project Pipeline). Интеграция с recharts для визуализации. Поддержка периодов (неделя, месяц, квартал, год). Добавлен route /owner-dashboard и пункт меню"
+
 agent_communication:
   - agent: "main"
     message: |
