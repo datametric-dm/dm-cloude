@@ -24,6 +24,7 @@ class ServiceUpdate(ServiceBase):
 
 class ServiceRead(ServiceBase):
     id: str
+    tenant_id: Optional[str] = None
     created_at: datetime
 
 class ServiceListResponse(BaseModel):
