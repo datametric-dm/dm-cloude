@@ -193,11 +193,14 @@ backend:
     file: "backend/routers/clients_mongo.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Обновлены все endpoints для автоматической фильтрации и добавления tenant_id через header X-Company-ID"
+      - working: true
+        agent: "testing"
+        comment: "✅ ПОЛНОСТЬЮ ПРОТЕСТИРОВАНО: Tenant isolation работает идеально. POST /clients/ создает клиента с tenant_id из X-Company-ID header. GET /clients/ и GET /clients/{id} фильтруют данные по tenant_id. Клиенты одной компании недоступны из другой компании (возвращает 404). Требует Bearer token для аутентификации. Изоляция данных по компаниям работает корректно."
 
   - task: "Database Migration - добавление tenant_id к существующим данным"
     implemented: true
