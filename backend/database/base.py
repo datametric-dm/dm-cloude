@@ -13,6 +13,8 @@ db = client[DB_NAME]
 
 # Определяем коллекции
 users_collection = db["users"]
+companies_collection = db["companies"]
+user_company_roles_collection = db["user_company_roles"]
 clients_collection = db["clients"]
 projects_collection = db["projects"]
 services_collection = db["services"]
