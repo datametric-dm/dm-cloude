@@ -118,8 +118,12 @@ async def get_invoice(
 async def create_invoice(
     invoice_data: InvoiceCreate,
     current_user = Depends(get_current_user),
-    db = Depends(get_db)
+    db = Depends(get_db),
+    x_company_id: Optional[str] = Header(None, alias="X-Company-ID")
 ):
+    if not x_company_id:
+        raise HTTPException(status_code=400, detail="X-Company-ID header is required")
+    
     invoice_dict = invoice_data.dict()
     
     if invoice_dict.get("date_issued") and not isinstance(invoice_dict["date_issued"], datetime):
@@ -129,6 +133,7 @@ async def create_invoice(
     
     invoice_dict.update({
         "id": str(uuid.uuid4()),
+        "tenant_id": x_company_id,
         "created_at": datetime.utcnow()
     })
     
