@@ -54,23 +54,23 @@ async def get_dashboard_stats(
     suspended_clients = clients_collection.count_documents({**base_query, "status": "suspended"})
     churned_clients = clients_collection.count_documents({**base_query, "status": "churned"})
     
-    total_projects = projects_collection.count_documents({})
-    active_projects = projects_collection.count_documents({"status": {"$in": ["in_progress", "planning"]}})
-    pending_invoices = invoices_collection.count_documents({"status": {"$in": ["draft", "sent"]}})
-    overdue_invoices = invoices_collection.count_documents({"status": "overdue"})
-    total_payments = payments_collection.count_documents({"status": "completed"})
-    overdue_payments_count = payments_collection.count_documents({"status": "pending"})
+    total_projects = projects_collection.count_documents(base_query)
+    active_projects = projects_collection.count_documents({**base_query, "status": {"$in": ["in_progress", "planning"]}})
+    pending_invoices = invoices_collection.count_documents({**base_query, "status": {"$in": ["draft", "sent"]}})
+    overdue_invoices = invoices_collection.count_documents({**base_query, "status": "overdue"})
+    total_payments = payments_collection.count_documents({**base_query, "status": "completed"})
+    overdue_payments_count = payments_collection.count_documents({**base_query, "status": "pending"})
     
     # Подсчитываем общую выручку из оплаченных счетов
-    paid_invoices = list(invoices_collection.find({"status": "paid"}))
+    paid_invoices = list(invoices_collection.find({**base_query, "status": "paid"}))
     total_revenue = sum(inv.get("amount", 0) for inv in paid_invoices)
     
     # Подсчитываем ожидаемую выручку из неоплаченных счетов
-    pending_invoices_list = list(invoices_collection.find({"status": {"$in": ["draft", "sent"]}}))
+    pending_invoices_list = list(invoices_collection.find({**base_query, "status": {"$in": ["draft", "sent"]}}))
     pending_revenue = sum(inv.get("amount", 0) for inv in pending_invoices_list)
     
     # Подсчитываем сумму просроченных платежей
-    overdue_payments_list = list(payments_collection.find({"status": "pending"}))
+    overdue_payments_list = list(payments_collection.find({**base_query, "status": "pending"}))
     overdue_amount = sum(pay.get("amount", 0) for pay in overdue_payments_list)
     
     return {
