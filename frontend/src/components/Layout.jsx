@@ -34,14 +34,20 @@ export default function Layout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { currentCompany, clearCompany } = useCompany();
   
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
   const handleLogout = () => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('user');
+    clearCompany();
     toast.success('Вы успешно вышли из системы');
     navigate('/login');
+  };
+
+  const handleSwitchCompany = () => {
+    navigate('/companies');
   };
 
   return (
