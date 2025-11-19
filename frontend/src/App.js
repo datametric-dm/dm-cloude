@@ -18,6 +18,8 @@ import ProjectFlow from './pages/ProjectFlow';
 import OwnerDashboard from './pages/OwnerDashboard';
 import FinancialFlow from './pages/FinancialFlow';
 import TeamLoad from './pages/TeamLoad';
+import Client360 from './pages/Client360';
+import RiskAnalyzer from './pages/RiskAnalyzer';
 import './App.css';
 
 const queryClient = new QueryClient({
