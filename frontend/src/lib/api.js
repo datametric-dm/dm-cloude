@@ -15,13 +15,40 @@ if (config.debug) {
   console.log('🌐 API initialized:', config.API_BASE);
 }
 
-// Добавляем interceptor для автоматической вставки токена
+// Добавляем interceptor для автоматической вставки токена и company ID
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('access_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    
+    // Add Company ID header for multi-tenancy
+    const currentCompany = localStorage.getItem('current_company');
+    if (currentCompany) {
+      try {
+        const company = JSON.parse(currentCompany);
+        if (company && company.id) {
+          config.headers['X-Company-ID'] = company.id;
+        }
+      } catch (e) {
+        console.error('Failed to parse current company', e);
+      }
+    }
+    
+    // Add User ID header
+    const user = localStorage.getItem('user');
+    if (user) {
+      try {
+        const userData = JSON.parse(user);
+        if (userData && userData.id) {
+          config.headers['X-User-ID'] = userData.id;
+        }
+      } catch (e) {
+        console.error('Failed to parse user', e);
+      }
+    }
+    
     return config;
   },
   (error) => {
