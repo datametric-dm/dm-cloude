@@ -23,6 +23,14 @@ payments_collection = db["payments"]
 files_collection = db["files"]
 project_stages_collection = db["project_stages"]
 kanban_columns_collection = db["kanban_columns"]
+financial_records_collection = db["financial_records"]
+cash_flow_forecasts_collection = db["cash_flow_forecasts"]
+weekly_summaries_collection = db["weekly_summaries"]
+work_time_records_collection = db["work_time_records"]
+user_workloads_collection = db["user_workloads"]
+department_workloads_collection = db["department_workloads"]
+task_assignments_collection = db["task_assignments"]
+workload_forecasts_collection = db["workload_forecasts"]
 
 # Функция для зависимости FastAPI
 def get_db():
