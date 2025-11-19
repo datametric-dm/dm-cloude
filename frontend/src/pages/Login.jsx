@@ -48,9 +48,9 @@ export default function Login() {
       
       toast.success(`Добро пожаловать, ${user.full_name || user.email}!`);
       
-      // Небольшая задержка перед редиректом
+      // Небольшая задержка перед редиректом на страницу выбора компании
       setTimeout(() => {
-        navigate('/dashboard');
+        navigate('/companies');
       }, 100);
       
     } catch (error) {
