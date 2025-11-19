@@ -63,11 +63,16 @@ async def get_clients(
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
     current_user = Depends(get_current_user),
-    db = Depends(get_db)
+    db = Depends(get_db),
+    x_company_id: Optional[str] = Header(None, alias="X-Company-ID")
 ):
-    """Получить список клиентов с пагинацией"""
-    clients = list(clients_collection.find().skip(skip).limit(limit))
-    total = clients_collection.count_documents({})
+    """Получить список клиентов с пагинацией (с учетом tenant_id)"""
+    query = {}
+    if x_company_id:
+        query["tenant_id"] = x_company_id
+    
+    clients = list(clients_collection.find(query).skip(skip).limit(limit))
+    total = clients_collection.count_documents(query)
     
     # Убираем _id из MongoDB
     for client in clients:
