@@ -36,6 +36,8 @@ routers = [
     try_import("routers.project_flow_mongo"),
     try_import("routers.financial_flow_mongo"),
     try_import("routers.team_load_mongo"),
+    try_import("routers.client_360_mongo"),
+    try_import("routers.risk_analyzer_mongo"),
 ]
 
 for r in routers:
