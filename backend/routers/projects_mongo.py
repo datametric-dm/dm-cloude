@@ -78,11 +78,14 @@ async def get_projects(
     direction: Optional[str] = None,  # Фильтр по направлению
     project_manager: Optional[str] = None,  # Фильтр по проект-менеджеру
     current_user = Depends(get_current_user),
-    db = Depends(get_db)
+    db = Depends(get_db),
+    x_company_id: Optional[str] = Header(None, alias="X-Company-ID")
 ):
     """Получить список проектов с пагинацией и фильтрами"""
     query = {}
     
+    if x_company_id:
+        query["tenant_id"] = x_company_id
     if status:
         query["status"] = status
     if client_id:
