@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
+import { CompanyProvider } from './contexts/CompanyContext';
 import Layout from './components/Layout';
 import PrivateRoute from './components/PrivateRoute';
 import Login from './pages/Login';
@@ -11,6 +12,8 @@ import ProjectsPage from './pages/Projects';
 import InvoicesPage from './pages/Invoices';
 import PaymentsPage from './pages/Payments';
 import ReportsPage from './pages/Reports';
+import CompanySelect from './pages/CompanySelect';
+import TeamManagement from './pages/TeamManagement';
 import './App.css';
 
 const queryClient = new QueryClient({
