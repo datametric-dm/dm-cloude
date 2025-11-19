@@ -27,7 +27,7 @@ import {
   Legend,
   ResponsiveContainer
 } from 'recharts';
-import api from '../lib/api';
+import { api } from '../lib/api';
 
 const OwnerDashboard = () => {
   const [period, setPeriod] = useState('month');
