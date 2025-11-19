@@ -368,7 +368,8 @@ class MultiTenancyTester:
             
             headers = {
                 "X-User-ID": self.test_user_id,
-                "X-Company-ID": self.test_company_id
+                "X-Company-ID": self.test_company_id,
+                "Authorization": "Bearer dummy-token"  # Required for authentication
             }
             response = self.session.post(f"{BACKEND_URL}/clients/", json=client_data, headers=headers)
             
