@@ -43,6 +43,7 @@ class InvoiceRead(BaseModel):
     id: str
     project_id: str
     client_id: str
+    tenant_id: Optional[str] = None
     number: str
     amount: float
     subtotal: Optional[float] = 0.0
