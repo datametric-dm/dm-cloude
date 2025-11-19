@@ -28,32 +28,40 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Router>
-        <div className="min-h-screen bg-gray-50">
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route
-              path="/*"
-              element={
+      <CompanyProvider>
+        <Router>
+          <div className="min-h-screen bg-gray-50">
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/companies" element={
                 <PrivateRoute>
-                  <Layout>
-                    <Routes>
-                      <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                      <Route path="/dashboard" element={<Dashboard />} />
-                      <Route path="/clients" element={<ClientsPage />} />
-                      <Route path="/projects" element={<ProjectsPage />} />
-                      <Route path="/invoices" element={<InvoicesPage />} />
-                      <Route path="/payments" element={<PaymentsPage />} />
-                      <Route path="/reports" element={<ReportsPage />} />
-                    </Routes>
-                  </Layout>
+                  <CompanySelect />
                 </PrivateRoute>
-              }
-            />
-          </Routes>
-          <Toaster position="top-right" richColors />
-        </div>
-      </Router>
+              } />
+              <Route
+                path="/*"
+                element={
+                  <PrivateRoute>
+                    <Layout>
+                      <Routes>
+                        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                        <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="/clients" element={<ClientsPage />} />
+                        <Route path="/projects" element={<ProjectsPage />} />
+                        <Route path="/invoices" element={<InvoicesPage />} />
+                        <Route path="/payments" element={<PaymentsPage />} />
+                        <Route path="/reports" element={<ReportsPage />} />
+                        <Route path="/team" element={<TeamManagement />} />
+                      </Routes>
+                    </Layout>
+                  </PrivateRoute>
+                }
+              />
+            </Routes>
+            <Toaster position="top-right" richColors />
+          </div>
+        </Router>
+      </CompanyProvider>
     </QueryClientProvider>
   );
 }
