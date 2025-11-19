@@ -615,3 +615,63 @@ agent_communication:
       ✅ Тест 5: Отчеты dashboard с фильтрацией по компании
       
       Система готова к продакшену с полной поддержкой multi-tenancy!
+
+  - task: "Tinkoff Acquiring Integration - платежная интеграция"
+    implemented: false
+    working: "NA"
+    file: "backend/services/tinkoff_service.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Получен playbook для интеграции Tinkoff Acquiring. Требуется реализация: HMAC-SHA256 подпись запросов, обработка webhook уведомлений, recurring платежи для подписок"
+
+  - task: "sCloud.ru Integration - интеграция с бухгалтерией"
+    implemented: false
+    working: "NA"
+    file: "backend/services/scloud_service.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Получен playbook для интеграции sCloud.ru. Требуется реализация: OAuth 2.0 аутентификация, синхронизация финансовых данных, обработка токенов"
+
+  - task: "Billing Plans Management - управление тарифными планами"
+    implemented: false
+    working: "NA"
+    file: "backend/routers/billing_mongo.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Структура создана. Требуется реализация логики управления подписками и интеграция с Tinkoff для обработки платежей"
+
+agent_communication:
+  - agent: "main"
+    message: |
+      🎯 ПОЛУЧЕНЫ PLAYBOOKS ДЛЯ ИНТЕГРАЦИЙ!
+      
+      Playbook #1 - Tinkoff Acquiring (для биллинга):
+      - OAuth/HMAC-SHA256 аутентификация
+      - Recurring payments для подписок
+      - Webhook обработка уведомлений
+      - Error handling с retry логикой
+      - Пример кода на FastAPI + httpx
+      
+      Playbook #2 - sCloud.ru (для бухгалтерии):
+      - OAuth 2.0 аутентификация
+      - Синхронизация финансовых данных
+      - Token management с автообновлением
+      - API клиент с async поддержкой
+      
+      Следующий шаг:
+      Реализация интеграции Tinkoff Acquiring для системы биллинга
+      
+      Backend перезапущен, все сервисы работают корректно.
+
