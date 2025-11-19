@@ -38,15 +38,21 @@ class ProjectStatusDistribution(BaseModel):
 @router.get("/dashboard", response_model=DashboardStats)
 async def get_dashboard_stats(
     current_user = Depends(get_current_user),
-    db = Depends(get_db)
+    db = Depends(get_db),
+    x_company_id: Optional[str] = Header(None, alias="X-Company-ID")
 ):
     """Получить статистику для дашборда"""
     
+    # Base query for tenant filtering
+    base_query = {}
+    if x_company_id:
+        base_query["tenant_id"] = x_company_id
+    
     # Подсчитываем статистику клиентов по статусам
-    total_clients = clients_collection.count_documents({})
-    active_clients = clients_collection.count_documents({"status": "active"})
-    suspended_clients = clients_collection.count_documents({"status": "suspended"})
-    churned_clients = clients_collection.count_documents({"status": "churned"})
+    total_clients = clients_collection.count_documents(base_query)
+    active_clients = clients_collection.count_documents({**base_query, "status": "active"})
+    suspended_clients = clients_collection.count_documents({**base_query, "status": "suspended"})
+    churned_clients = clients_collection.count_documents({**base_query, "status": "churned"})
     
     total_projects = projects_collection.count_documents({})
     active_projects = projects_collection.count_documents({"status": {"$in": ["in_progress", "planning"]}})
