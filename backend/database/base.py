@@ -21,6 +21,8 @@ services_collection = db["services"]
 invoices_collection = db["invoices"]
 payments_collection = db["payments"]
 files_collection = db["files"]
+project_stages_collection = db["project_stages"]
+kanban_columns_collection = db["kanban_columns"]
 
 # Функция для зависимости FastAPI
 def get_db():
