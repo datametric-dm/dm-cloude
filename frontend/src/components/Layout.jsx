@@ -85,6 +85,41 @@ export default function Layout({ children }) {
           </button>
         </div>
 
+        {/* Company Selector */}
+        {currentCompany && (
+          <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
+            <DropdownMenu>
+              <DropdownMenuTrigger className="w-full">
+                <div className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <Building2 className="h-5 w-5 text-blue-600 flex-shrink-0" />
+                    <div className="text-left min-w-0 flex-1">
+                      <p className="text-sm font-medium text-gray-900 truncate">
+                        {currentCompany.name}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {currentCompany.user_role === 'owner' && 'Владелец'}
+                        {currentCompany.user_role === 'admin' && 'Администратор'}
+                        {currentCompany.user_role === 'manager' && 'Менеджер'}
+                        {currentCompany.user_role === 'observer' && 'Наблюдатель'}
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronDown className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                <DropdownMenuLabel>Текущая компания</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleSwitchCompany}>
+                  <Building2 className="h-4 w-4 mr-2" />
+                  Сменить компанию
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        )}
+
         <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
           {navigation.map((item) => {
             const Icon = item.icon;
