@@ -157,6 +157,7 @@ async def create_project(
     
     project_dict.update({
         "id": str(uuid.uuid4()),
+        "tenant_id": x_company_id,
         "created_at": datetime.utcnow(),
         "updated_at": None
     })
