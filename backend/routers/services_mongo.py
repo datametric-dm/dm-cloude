@@ -35,10 +35,15 @@ async def get_services(
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
     current_user = Depends(get_current_user),
-    db = Depends(get_db)
+    db = Depends(get_db),
+    x_company_id: Optional[str] = Header(None, alias="X-Company-ID")
 ):
-    services = list(services_collection.find().skip(skip).limit(limit))
-    total = services_collection.count_documents({})
+    query = {}
+    if x_company_id:
+        query["tenant_id"] = x_company_id
+    
+    services = list(services_collection.find(query).skip(skip).limit(limit))
+    total = services_collection.count_documents(query)
     for service in services:
         service.pop("_id", None)
     return {"services": services, "total": total}
