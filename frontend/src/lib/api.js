@@ -142,3 +142,22 @@ export const telegramApi = {
   notifyOverdue: () => api.post('/telegram/notify-overdue'),
   sendDailyReport: () => api.post('/telegram/daily-report'),
 };
+
+// Companies (Multi-tenancy)
+export const companiesApi = {
+  getMy: () => api.get('/companies/my'),
+  getById: (id) => api.get(`/companies/${id}`),
+  create: (data) => api.post('/companies', data),
+  update: (id, data) => api.put(`/companies/${id}`, data),
+  delete: (id) => api.delete(`/companies/${id}`),
+  getStats: (id) => api.get(`/companies/${id}/stats`),
+};
+
+// Team Management
+export const teamApi = {
+  getMembers: (companyId) => api.get(`/companies/${companyId}/team`),
+  inviteUser: (companyId, data) => api.post(`/companies/${companyId}/team/invite`, data),
+  updateRole: (companyId, userId, data) => api.put(`/companies/${companyId}/team/${userId}/role`, data),
+  updatePermissions: (companyId, userId, data) => api.put(`/companies/${companyId}/team/${userId}/permissions`, data),
+  removeUser: (companyId, userId) => api.delete(`/companies/${companyId}/team/${userId}`),
+};
