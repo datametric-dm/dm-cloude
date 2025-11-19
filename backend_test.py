@@ -25,8 +25,13 @@ class MultiTenancyTester:
         self.test_company_id = None
         self.test_company_2_id = None
         self.test_client_id = None
+        self.test_project_id = None
+        self.test_invoice_id = None
+        self.test_payment_id = None
+        self.test_service_id = None
         self.invited_user_id = None
         self.results = []
+        self.auth_token = None
         
     def log_result(self, test_name, success, details="", response_data=None):
         """Log test result"""
