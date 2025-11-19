@@ -47,6 +47,7 @@ class ProjectRead(BaseModel):
     id: str
     name: str
     client_id: str
+    tenant_id: Optional[str] = None
     description: Optional[str] = None
     status: str = "planning"
     priority: Optional[int] = 3
