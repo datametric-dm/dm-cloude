@@ -15,6 +15,8 @@ import {
   ChevronDown,
   UserCog,
   TrendingUp,
+  AlertTriangle,
+  Eye,
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { toast } from 'sonner';
