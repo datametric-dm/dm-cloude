@@ -27,6 +27,8 @@ const navigation = [
   { name: 'Клиенты', href: '/clients', icon: Users },
   { name: 'Проекты', href: '/projects', icon: FolderOpen },
   { name: 'Project Flow', href: '/project-flow', icon: FolderOpen },
+  { name: 'Financial Flow', href: '/financial-flow', icon: BarChart3 },
+  { name: 'Team Load', href: '/team-load', icon: Users },
   { name: 'Счета', href: '/invoices', icon: FileText },
   { name: 'Платежи', href: '/payments', icon: CreditCard },
   { name: 'Отчеты', href: '/reports', icon: BarChart3 },
