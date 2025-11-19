@@ -46,7 +46,7 @@ class MultiTenancyTester:
     def test_health_check(self):
         """Test if backend is running"""
         try:
-            response = self.session.get(f"{BACKEND_URL}/health")
+            response = self.session.get(f"{BACKEND_URL}/healthz")
             if response.status_code == 200:
                 self.log_result("Backend Health Check", True, "Backend is running")
                 return True
