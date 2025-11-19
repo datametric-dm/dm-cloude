@@ -33,6 +33,7 @@ class PaymentRead(BaseModel):
     id: str
     invoice_id: str
     client_id: str
+    tenant_id: Optional[str] = None
     project_id: Optional[str] = None
     amount: float
     date_expected: datetime
