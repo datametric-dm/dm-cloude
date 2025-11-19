@@ -26,6 +26,94 @@ import {
 } from 'lucide-react';
 import { api } from '../lib/api';
 
+// Stage Card Component with drag-and-drop
+const StageCard = ({ stage, onEdit }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging
+  } = useSortable({ id: stage.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className={`bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow cursor-move ${
+        isDragging ? 'shadow-lg' : ''
+      }`}
+    >
+      <div className="space-y-2">
+        <div className="flex items-start justify-between">
+          <h4 className="font-medium text-gray-900 text-sm">
+            {stage.name}
+          </h4>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit();
+            }}
+            className="p-1 hover:bg-gray-100 rounded"
+          >
+            <Edit2 className="h-3 w-3 text-gray-500" />
+          </button>
+        </div>
+
+        {stage.description && (
+          <p className="text-xs text-gray-600 line-clamp-2">
+            {stage.description}
+          </p>
+        )}
+
+        <div className="flex items-center justify-between text-xs text-gray-500">
+          <div className="flex items-center space-x-2">
+            {stage.due_date && (
+              <div className="flex items-center">
+                <Calendar className="h-3 w-3 mr-1" />
+                {new Date(stage.due_date).toLocaleDateString('ru-RU')}
+              </div>
+            )}
+            {stage.assigned_to && (
+              <div className="flex items-center">
+                <User className="h-3 w-3 mr-1" />
+                {stage.assigned_to}
+              </div>
+            )}
+          </div>
+          {stage.progress !== undefined && (
+            <span className="font-medium">{stage.progress}%</span>
+          )}
+        </div>
+
+        {stage.progress !== undefined && (
+          <div className="w-full bg-gray-200 rounded-full h-1.5">
+            <div
+              className="bg-blue-600 h-1.5 rounded-full transition-all"
+              style={{ width: `${stage.progress}%` }}
+            />
+          </div>
+        )}
+
+        {stage.stage_type && (
+          <span className="inline-block px-2 py-1 text-xs rounded bg-gray-100 text-gray-700">
+            {stage.stage_type}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+};
+
 const ProjectFlow = () => {
   const queryClient = useQueryClient();
   const [columns, setColumns] = useState([]);
