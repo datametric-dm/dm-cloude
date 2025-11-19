@@ -104,14 +104,18 @@ async def get_client(
 async def create_client(
     client_data: ClientCreate,
     current_user = Depends(get_current_user),
-    db = Depends(get_db)
+    db = Depends(get_db),
+    x_company_id: Optional[str] = Header(None, alias="X-Company-ID")
 ):
-    """Создать нового клиента"""
+    """Создать нового клиента (с tenant_id)"""
+    if not x_company_id:
+        raise HTTPException(status_code=400, detail="X-Company-ID header is required")
     
     # Создаем клиента
     client_dict = client_data.dict()
     client_dict.update({
         "id": str(uuid.uuid4()),
+        "tenant_id": x_company_id,
         "created_at": datetime.utcnow(),
         "updated_at": None
     })
