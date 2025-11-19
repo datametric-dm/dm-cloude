@@ -617,40 +617,49 @@ agent_communication:
       Система готова к продакшену с полной поддержкой multi-tenancy!
 
   - task: "Tinkoff Acquiring Integration - платежная интеграция"
-    implemented: false
+    implemented: true
     working: "NA"
     file: "backend/services/tinkoff_service.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Получен playbook для интеграции Tinkoff Acquiring. Требуется реализация: HMAC-SHA256 подпись запросов, обработка webhook уведомлений, recurring платежи для подписок"
+      - working: "NA"
+        agent: "main"
+        comment: "✅ РЕАЛИЗОВАНО: TinkoffAcquiringService с полной поддержкой: init_payment, get_payment_state, charge_recurring, cancel_payment, validate_webhook_signature. HMAC-SHA256 подпись запросов реализована. Endpoints добавлены в billing_mongo.py: /subscription/create-payment, /webhook/tinkoff, /payment/{id}/status"
 
   - task: "sCloud.ru Integration - интеграция с бухгалтерией"
-    implemented: false
+    implemented: true
     working: "NA"
     file: "backend/services/scloud_service.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Получен playbook для интеграции sCloud.ru. Требуется реализация: OAuth 2.0 аутентификация, синхронизация финансовых данных, обработка токенов"
+      - working: "NA"
+        agent: "main"
+        comment: "✅ РЕАЛИЗОВАНО: SCloudAPIClient с OAuth 2.0: get_authorization_url, exchange_code_for_token, refresh_access_token, get_user_info, get_financial_data, sync_invoices, sync_transactions. Endpoints добавлены в integrations_mongo.py: /scloud/authorize, /scloud/callback, /scloud/{id}/sync"
 
   - task: "Billing Plans Management - управление тарифными планами"
-    implemented: false
+    implemented: true
     working: "NA"
     file: "backend/routers/billing_mongo.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Структура создана. Требуется реализация логики управления подписками и интеграция с Tinkoff для обработки платежей"
+      - working: "NA"
+        agent: "main"
+        comment: "✅ РЕАЛИЗОВАНО: Интеграция Tinkoff Acquiring в billing API. Поддержка создания платежей для подписок, обработка webhook уведомлений, активация подписок после успешной оплаты. Recurring платежи готовы для автоматического списания"
 
 agent_communication:
   - agent: "main"
