@@ -176,8 +176,11 @@ async def update_project(
     x_company_id: Optional[str] = Header(None, alias="X-Company-ID")
 ):
     """Обновить проект"""
+    query = {"id": project_id}
+    if x_company_id:
+        query["tenant_id"] = x_company_id
     
-    existing = projects_collection.find_one({"id": project_id})
+    existing = projects_collection.find_one(query)
     if not existing:
         raise HTTPException(status_code=404, detail="Проект не найден")
     
