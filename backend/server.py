@@ -22,6 +22,8 @@ app.add_middleware(
 
 routers = [
     try_import("routers.auth_mongo"),
+    try_import("routers.companies_mongo"),
+    try_import("routers.team_mongo"),
     try_import("routers.clients_mongo"),
     try_import("routers.projects_mongo"),
     try_import("routers.services_mongo"),
