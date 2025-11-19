@@ -129,7 +129,7 @@ API_VERSION_STR=/api
 
 **Содержимое:**
 ```env
-REACT_APP_BACKEND_URL=https://button-test-system.preview.emergentagent.com
+REACT_APP_BACKEND_URL=https://saasagency.preview.emergentagent.com
 WDS_SOCKET_PORT=443
 ```
 
