@@ -151,11 +151,14 @@ backend:
     file: "backend/routers/companies_mongo.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Реализованы endpoints: POST /companies (создание), GET /companies/my (список моих), GET /companies/{id}, PUT /companies/{id}, DELETE /companies/{id}, GET /companies/{id}/stats"
+      - working: true
+        agent: "testing"
+        comment: "✅ ПОЛНОСТЬЮ ПРОТЕСТИРОВАНО: Все endpoints работают корректно. POST /companies создает компанию и назначает создателя OWNER. GET /companies/my возвращает список компаний с ролями пользователя. GET /companies/{id} проверяет доступ и возвращает детали. PUT /companies/{id} обновляет данные (только OWNER/ADMIN). GET /companies/{id}/stats возвращает статистику. Проверка прав доступа работает корректно."
 
   - task: "Team Management API - управление пользователями в компании"
     implemented: true
