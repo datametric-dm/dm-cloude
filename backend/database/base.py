@@ -31,6 +31,13 @@ user_workloads_collection = db["user_workloads"]
 department_workloads_collection = db["department_workloads"]
 task_assignments_collection = db["task_assignments"]
 workload_forecasts_collection = db["workload_forecasts"]
+client_interactions_collection = db["client_interactions"]
+client_health_scores_collection = db["client_health_scores"]
+client_timelines_collection = db["client_timelines"]
+risks_collection = db["risks"]
+project_risk_analyses_collection = db["project_risk_analyses"]
+team_risk_analyses_collection = db["team_risk_analyses"]
+client_churn_risks_collection = db["client_churn_risks"]
 
 # Функция для зависимости FastAPI
 def get_db():
