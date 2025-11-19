@@ -710,6 +710,30 @@ frontend:
         agent: "main"
         comment: "✅ РЕАЛИЗОВАНО: Страница мониторинга загрузки команды. Карточки статистики (всего, недогружены, норма, перегружены), Bar Chart загрузки, Pie Chart распределения, детальный список сотрудников с прогресс-барами и активными проектами. Route /team-load добавлен"
 
+  - task: "Client 360 UI - единый вид клиента"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/Client360.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "✅ РЕАЛИЗОВАНО: Страница Client 360 с полной информацией о клиенте. Компоненты: хедер клиента с контактами, KPI (проекты, счета, средний чек, health score), график динамики дохода, список активных проектов и счетов, timeline взаимодействий. Селектор клиентов. Route /client-360 добавлен"
+
+  - task: "Risk Analyzer UI - дашборд рисков"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/RiskAnalyzer.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "✅ РЕАЛИЗОВАНО: Страница Risk Analyzer для анализа рисков портфеля. KPI (общий риск, критические/высокие/под контролем), Pie Chart распределения рисков, Radar Chart факторов риска, списки проектов и клиентов в зоне риска с индикаторами, секция рекомендаций. Фильтр периодов. Route /risk-analyzer добавлен"
+
 agent_communication:
   - agent: "main"
     message: |
