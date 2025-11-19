@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query, HTTPException
+from fastapi import APIRouter, Depends, Query, HTTPException, Header
 from database.base import get_db, clients_collection, projects_collection, invoices_collection, payments_collection
 from routers.auth_mongo import get_current_user
 from pydantic import BaseModel
