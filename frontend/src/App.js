@@ -16,6 +16,8 @@ import CompanySelect from './pages/CompanySelect';
 import TeamManagement from './pages/TeamManagement';
 import ProjectFlow from './pages/ProjectFlow';
 import OwnerDashboard from './pages/OwnerDashboard';
+import FinancialFlow from './pages/FinancialFlow';
+import TeamLoad from './pages/TeamLoad';
 import './App.css';
 
 const queryClient = new QueryClient({
