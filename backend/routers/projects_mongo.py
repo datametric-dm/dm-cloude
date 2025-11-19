@@ -108,10 +108,15 @@ async def get_projects(
 async def get_project(
     project_id: str,
     current_user = Depends(get_current_user),
-    db = Depends(get_db)
+    db = Depends(get_db),
+    x_company_id: Optional[str] = Header(None, alias="X-Company-ID")
 ):
     """Получить проект по ID"""
-    project = projects_collection.find_one({"id": project_id})
+    query = {"id": project_id}
+    if x_company_id:
+        query["tenant_id"] = x_company_id
+    
+    project = projects_collection.find_one(query)
     
     if not project:
         raise HTTPException(status_code=404, detail="Проект не найден")
@@ -123,9 +128,12 @@ async def get_project(
 async def create_project(
     project_data: ProjectCreate,
     current_user = Depends(get_current_user),
-    db = Depends(get_db)
+    db = Depends(get_db),
+    x_company_id: Optional[str] = Header(None, alias="X-Company-ID")
 ):
     """Создать новый проект"""
+    if not x_company_id:
+        raise HTTPException(status_code=400, detail="X-Company-ID header is required")
     
     project_dict = project_data.dict()
     
