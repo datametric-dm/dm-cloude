@@ -54,6 +54,8 @@ function App() {
                         <Route path="/clients" element={<ClientsPage />} />
                         <Route path="/projects" element={<ProjectsPage />} />
                         <Route path="/project-flow" element={<ProjectFlow />} />
+                        <Route path="/financial-flow" element={<FinancialFlow />} />
+                        <Route path="/team-load" element={<TeamLoad />} />
                         <Route path="/invoices" element={<InvoicesPage />} />
                         <Route path="/payments" element={<PaymentsPage />} />
                         <Route path="/reports" element={<ReportsPage />} />
