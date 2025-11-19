@@ -146,9 +146,14 @@ async def update_invoice(
     invoice_id: str,
     invoice_data: InvoiceUpdate,
     current_user = Depends(get_current_user),
-    db = Depends(get_db)
+    db = Depends(get_db),
+    x_company_id: Optional[str] = Header(None, alias="X-Company-ID")
 ):
-    existing = invoices_collection.find_one({"id": invoice_id})
+    query = {"id": invoice_id}
+    if x_company_id:
+        query["tenant_id"] = x_company_id
+    
+    existing = invoices_collection.find_one(query)
     if not existing:
         raise HTTPException(status_code=404, detail="Счет не найден")
     
