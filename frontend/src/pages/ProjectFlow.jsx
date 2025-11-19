@@ -177,11 +177,12 @@ const ProjectFlow = () => {
       </div>
 
       {/* Kanban Board */}
-      <DragDropContext onDragEnd={onDragEnd}>
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <div className="flex space-x-4 overflow-x-auto pb-4">
           {columns.map((column) => (
             <div
               key={column.id}
+              id={column.id}
               className="flex-shrink-0 w-80 bg-gray-50 rounded-lg"
               style={{ minHeight: '500px' }}
             >
@@ -207,26 +208,24 @@ const ProjectFlow = () => {
               </div>
 
               {/* Droppable Area */}
-              <Droppable droppableId={column.id}>
-                {(provided, snapshot) => (
-                  <div
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
-                    className={`p-4 space-y-3 min-h-[400px] ${
-                      snapshot.isDraggingOver ? 'bg-blue-50' : ''
-                    }`}
-                  >
-                    {getStagesByColumn(column.id).map((stage, index) => (
-                      <Draggable key={stage.id} draggableId={stage.id} index={index}>
-                        {(provided, snapshot) => (
-                          <div
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            className={`bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow ${
-                              snapshot.isDragging ? 'shadow-lg' : ''
-                            }`}
-                          >
+              <SortableContext items={getStagesByColumn(column.id).map(s => s.id)} strategy={verticalListSortingStrategy}>
+                <div className="p-4 space-y-3 min-h-[400px]">
+                  {getStagesByColumn(column.id).map((stage) => (
+                    <StageCard
+                      key={stage.id}
+                      stage={stage}
+                      onEdit={() => {
+                        setSelectedStage(stage);
+                        setShowStageDialog(true);
+                      }}
+                    />
+                  ))}
+                </div>
+              </SortableContext>
+            </div>
+          ))}
+        </div>
+      </DndContext>
                             {/* Stage Card */}
                             <div className="space-y-2">
                               <div className="flex items-start justify-between">
