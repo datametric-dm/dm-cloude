@@ -683,4 +683,70 @@ agent_communication:
       Реализация интеграции Tinkoff Acquiring для системы биллинга
       
       Backend перезапущен, все сервисы работают корректно.
+  - agent: "main"
+    message: |
+      ✅ ИНТЕГРАЦИИ РЕАЛИЗОВАНЫ!
+      
+      **Tinkoff Acquiring (Биллинг):**
+      Файлы:
+      - backend/services/tinkoff_service.py (новый)
+      - backend/routers/billing_mongo.py (обновлен)
+      
+      Реализовано:
+      1. TinkoffAcquiringService с методами:
+         - init_payment() - инициализация платежа для подписки
+         - get_payment_state() - получение статуса платежа
+         - charge_recurring() - автоматическое списание для recurring платежей
+         - cancel_payment() - отмена платежа
+         - validate_webhook_signature() - проверка подписи webhook с HMAC-SHA256
+      
+      2. API Endpoints:
+         - POST /api/billing/subscription/create-payment - создание платежа
+         - POST /api/billing/webhook/tinkoff - webhook от Tinkoff
+         - GET /api/billing/payment/{id}/status - статус платежа
+      
+      3. Функционал:
+         - Конвертация рублей в копейки (1 RUB = 100 kopecks)
+         - HMAC-SHA256 подпись всех запросов
+         - Обработка webhook уведомлений с валидацией подписи
+         - Автоматическая активация подписки после оплаты
+         - Сохранение rebill_id для recurring платежей
+         - Обновление лимитов компании при смене тарифа
+      
+      **sCloud.ru (Бухгалтерия):**
+      Файлы:
+      - backend/services/scloud_service.py (новый)
+      - backend/routers/integrations_mongo.py (обновлен)
+      
+      Реализовано:
+      1. SCloudAPIClient с методами:
+         - get_authorization_url() - генерация OAuth URL
+         - exchange_code_for_token() - обмен code на tokens
+         - refresh_access_token() - обновление токена
+         - ensure_valid_token() - автоматическое обновление
+         - get_user_info() - информация о пользователе
+         - get_financial_data() - получение финансовых данных
+         - sync_invoices() - синхронизация счетов
+         - sync_transactions() - синхронизация транзакций
+      
+      2. API Endpoints:
+         - GET /api/integrations/scloud/authorize - начало OAuth
+         - GET /api/integrations/scloud/callback - OAuth callback
+         - POST /api/integrations/scloud/{id}/sync - ручная синхронизация
+      
+      3. Функционал:
+         - OAuth 2.0 flow с state для CSRF защиты
+         - Автоматическое обновление access token
+         - Сохранение tokens в MongoDB
+         - Синхронизация счетов и транзакций
+         - Логирование всех операций синхронизации
+      
+      **Конфигурация:**
+      - backend/.env обновлен с переменными для обеих интеграций
+      - apscheduler установлен для будущей автоматизации
+      - requirements.txt обновлен
+      
+      **Статус:**
+      Backend успешно перезапущен, все сервисы работают корректно.
+      Требуется тестирование с реальными API ключами от пользователя.
 
