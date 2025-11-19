@@ -60,21 +60,34 @@ class MultiTenancyTester:
     def create_test_user(self):
         """Create a test user for testing"""
         try:
-            # First try to register a user
+            # Try to use the seeded admin user first
+            login_data = {
+                "email": "adminDM@test.com",
+                "password": "adminDM4321!"
+            }
+            
+            login_response = self.session.post(f"{BACKEND_URL}/login", json=login_data)
+            if login_response.status_code == 200:
+                data = login_response.json()
+                self.test_user_id = data.get("user", {}).get("id")
+                self.log_result("Create Test User", True, f"Using seeded admin user ID: {self.test_user_id}")
+                return True
+            
+            # If admin login fails, try to register a new user
             user_data = {
                 "email": "test.admin@multitenancy.com",
                 "password": "TestPassword123!",
                 "full_name": "Test Admin User"
             }
             
-            response = self.session.post(f"{BACKEND_URL}/register", json=user_data)
+            response = self.session.post(f"{BACKEND_URL}/auth/register", json=user_data)
             
-            if response.status_code == 201:
+            if response.status_code == 200:
                 data = response.json()
-                self.test_user_id = data.get("user", {}).get("id")
+                self.test_user_id = data.get("id")
                 self.log_result("Create Test User", True, f"User created with ID: {self.test_user_id}")
                 return True
-            elif response.status_code == 400 and "already registered" in response.text:
+            elif response.status_code == 400 and "exists" in response.text:
                 # User exists, try to login
                 login_data = {
                     "email": user_data["email"],
