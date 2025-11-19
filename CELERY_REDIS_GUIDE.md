@@ -242,7 +242,7 @@ print(task.result)  # Результат (когда готово)
 
 ```bash
 # Запустить еженедельный отчет
-curl -X POST https://saasagency.preview.emergentagent.com/api/tasks/trigger \
+curl -X POST https://agencyops.preview.emergentagent.com/api/tasks/trigger \
   -H "Authorization: Bearer token" \
   -H "X-User-ID: user_id" \
   -H "X-Company-ID: company_id" \
@@ -253,7 +253,7 @@ curl -X POST https://saasagency.preview.emergentagent.com/api/tasks/trigger \
   }'
 
 # Проверить статус
-curl -X GET https://saasagency.preview.emergentagent.com/api/tasks/status/{task_id} \
+curl -X GET https://agencyops.preview.emergentagent.com/api/tasks/status/{task_id} \
   -H "Authorization: Bearer token"
 ```
 

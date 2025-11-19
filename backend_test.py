@@ -16,7 +16,7 @@ from datetime import datetime, date, timedelta
 import uuid
 
 # Backend URL from frontend/.env
-BACKEND_URL = "https://saasagency.preview.emergentagent.com/api"
+BACKEND_URL = "https://agencyops.preview.emergentagent.com/api"
 
 class MultiTenancyTester:
     def __init__(self):

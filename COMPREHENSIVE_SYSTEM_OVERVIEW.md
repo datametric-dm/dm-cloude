@@ -340,7 +340,7 @@
 
 ## 🔗 ДОСТУП К СИСТЕМЕ
 
-**URL:** https://saasagency.preview.emergentagent.com
+**URL:** https://agencyops.preview.emergentagent.com
 
 **Тестовый аккаунт:**
 - Email: `adminDM@test.com`
