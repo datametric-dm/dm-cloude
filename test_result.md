@@ -686,6 +686,30 @@ frontend:
         agent: "main"
         comment: "✅ РЕАЛИЗОВАНО: Продвинутый аналитический дашборд для владельца. Компоненты: KPI карточки (MRR, Проекты, Клиенты, Риски), графики (Financial Flow, Risk Distribution, Team Load, Project Pipeline). Интеграция с recharts для визуализации. Поддержка периодов (неделя, месяц, квартал, год). Добавлен route /owner-dashboard и пункт меню"
 
+  - task: "Financial Flow UI - анализ план/факт"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/FinancialFlow.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "✅ РЕАЛИЗОВАНО: Страница анализа финансового потока. KPI карточки (План, Факт, Отклонение, Выполнение), Area Chart (план vs факт vs расходы), детализация по проектам и клиентам, индикаторы статуса (в срок, ожидается, просрочено). Route /financial-flow добавлен"
+
+  - task: "Team Load UI - мониторинг загрузки"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/TeamLoad.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "✅ РЕАЛИЗОВАНО: Страница мониторинга загрузки команды. Карточки статистики (всего, недогружены, норма, перегружены), Bar Chart загрузки, Pie Chart распределения, детальный список сотрудников с прогресс-барами и активными проектами. Route /team-load добавлен"
+
 agent_communication:
   - agent: "main"
     message: |
