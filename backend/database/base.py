@@ -38,6 +38,17 @@ risks_collection = db["risks"]
 project_risk_analyses_collection = db["project_risk_analyses"]
 team_risk_analyses_collection = db["team_risk_analyses"]
 client_churn_risks_collection = db["client_churn_risks"]
+subscription_plans_collection = db["subscription_plans"]
+subscriptions_collection = db["subscriptions"]
+payment_methods_collection = db["payment_methods"]
+billing_transactions_collection = db["billing_transactions"]
+billing_invoices_collection = db["billing_invoices"]
+integrations_collection = db["integrations"]
+integration_logs_collection = db["integration_logs"]
+integration_mappings_collection = db["integration_mappings"]
+accounting_configs_collection = db["accounting_configs"]
+crm_configs_collection = db["crm_configs"]
+bank_configs_collection = db["bank_configs"]
 
 # Функция для зависимости FastAPI
 def get_db():
