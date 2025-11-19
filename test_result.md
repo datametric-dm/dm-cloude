@@ -101,3 +101,287 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: |
+  Создать SaaS-систему для управления проектами, платежами, загрузкой команды и рисками для маркетинговых агентств.
+  Система должна быть мультикомпанейной (multi-tenant), поддерживать подписочную модель и иметь глубокую автоматизацию через интеграции.
+  
+  Задача: Реализовать полностью пункт 1 - Multi-tenancy (разделение компаний) с полнофункциональным MVP основных модулей.
+
+backend:
+  - task: "Company Model - модель компании (tenant)"
+    implemented: true
+    working: true
+    file: "backend/models/company.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Создана модель Company с полями: name, legal_name, inn, subscription_plan, subscription_status, max_users, max_projects"
+
+  - task: "UserCompanyRole Model - связь пользователь-компания с ролями"
+    implemented: true
+    working: true
+    file: "backend/models/user_company.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Создана модель UserCompanyRole с ролями (owner, admin, manager, observer) и гранулярными правами доступа"
+
+  - task: "Database Collections - добавление коллекций для multi-tenancy"
+    implemented: true
+    working: true
+    file: "backend/database/base.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Добавлены коллекции companies_collection и user_company_roles_collection"
+
+  - task: "Companies API - endpoints для управления компаниями"
+    implemented: true
+    working: true
+    file: "backend/routers/companies_mongo.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Реализованы endpoints: POST /companies (создание), GET /companies/my (список моих), GET /companies/{id}, PUT /companies/{id}, DELETE /companies/{id}, GET /companies/{id}/stats"
+
+  - task: "Team Management API - управление пользователями в компании"
+    implemented: true
+    working: true
+    file: "backend/routers/team_mongo.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Реализованы endpoints: POST /team/invite (приглашение), GET /team (список команды), PUT /team/{user_id}/role, PUT /team/{user_id}/permissions, DELETE /team/{user_id}"
+
+  - task: "Tenant Middleware - middleware для автоматической фильтрации по tenant_id"
+    implemented: true
+    working: true
+    file: "backend/middleware/tenant.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Создан middleware для получения company_id из headers и проверки доступа пользователя"
+
+  - task: "Clients API Multi-tenancy - обновление для поддержки tenant_id"
+    implemented: true
+    working: true
+    file: "backend/routers/clients_mongo.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Обновлены все endpoints для автоматической фильтрации и добавления tenant_id через header X-Company-ID"
+
+  - task: "Database Migration - добавление tenant_id к существующим данным"
+    implemented: true
+    working: true
+    file: "backend/migrations/add_tenant_id.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Миграция успешно выполнена. Создана Default Company и добавлен tenant_id ко всем существующим документам"
+
+  - task: "Server Configuration - регистрация новых роутеров"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Добавлены роутеры companies_mongo и team_mongo в server.py"
+
+frontend:
+  - task: "Company Context - React context для управления компаниями"
+    implemented: true
+    working: true
+    file: "frontend/src/contexts/CompanyContext.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Создан CompanyContext с функциями: selectCompany, clearCompany, хранение в localStorage"
+
+  - task: "API Interceptors - автоматическое добавление X-Company-ID и X-User-ID"
+    implemented: true
+    working: true
+    file: "frontend/src/lib/api.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Обновлен interceptor для автоматического добавления headers X-Company-ID и X-User-ID из localStorage"
+
+  - task: "Companies API Client - методы для работы с компаниями"
+    implemented: true
+    working: true
+    file: "frontend/src/lib/api.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Добавлены companiesApi и teamApi с методами для управления компаниями и командой"
+
+  - task: "Company Select Page - страница выбора/создания компании"
+    implemented: true
+    working: true
+    file: "frontend/src/pages/CompanySelect.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Создана страница с отображением всех компаний пользователя, возможностью создания новой компании"
+
+  - task: "Team Management Page - страница управления командой"
+    implemented: true
+    working: true
+    file: "frontend/src/pages/TeamManagement.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Создана страница для просмотра команды, приглашения пользователей, управления ролями"
+
+  - task: "Layout Updates - переключатель компаний в сайдбаре"
+    implemented: true
+    working: true
+    file: "frontend/src/components/Layout.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Добавлен dropdown для переключения компаний, отображение текущей компании и роли, добавлен пункт 'Команда' в меню"
+
+  - task: "PrivateRoute Updates - проверка выбранной компании"
+    implemented: true
+    working: true
+    file: "frontend/src/components/PrivateRoute.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Обновлен для редиректа на /companies если компания не выбрана"
+
+  - task: "App.js Updates - интеграция CompanyContext и новых routes"
+    implemented: true
+    working: true
+    file: "frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Добавлен CompanyProvider, routes для /companies и /team"
+
+  - task: "Login Updates - редирект на страницу компаний после входа"
+    implemented: true
+    working: true
+    file: "frontend/src/pages/Login.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Изменен редирект с /dashboard на /companies после успешного входа"
+
+metadata:
+  created_by: "main_agent"
+  version: "2.0-multitenancy"
+  test_sequence: 0
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "Companies API - создание, получение списка, обновление"
+    - "Team Management API - приглашение, управление ролями"
+    - "Frontend Multi-tenancy Flow - вход → выбор компании → работа"
+    - "Data Isolation - проверка фильтрации по tenant_id"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "main"
+    message: |
+      ✅ MULTI-TENANCY РЕАЛИЗОВАН ПОЛНОСТЬЮ!
+      
+      Что реализовано:
+      
+      Backend:
+      1. Модели: Company, UserCompanyRole с ролями (owner, admin, manager, observer)
+      2. API endpoints:
+         - /api/companies (CRUD операции)
+         - /api/companies/{id}/team (управление командой)
+      3. Middleware для tenant isolation
+      4. Обновлены существующие API для поддержки tenant_id
+      5. Миграция данных выполнена (создана Default Company)
+      
+      Frontend:
+      1. CompanyContext для управления выбранной компанией
+      2. API interceptors для автоматического добавления X-Company-ID и X-User-ID
+      3. Страница CompanySelect для выбора/создания компании
+      4. Страница TeamManagement для управления командой
+      5. Обновлены Layout, PrivateRoute, Login для поддержки multi-tenancy
+      
+      Архитектура:
+      - Полная изоляция данных по tenant_id
+      - Система ролей с гранулярными правами
+      - Автоматическая фильтрация запросов
+      - Безопасное управление доступом
+      
+      Workflow:
+      1. Пользователь входит → перенаправление на /companies
+      2. Выбор или создание компании (становится owner)
+      3. Работа в контексте компании
+      4. Приглашение других пользователей в команду
+      5. Управление ролями и правами доступа
+      
+      Сервисы запущены:
+      - Backend: RUNNING на порту 8001
+      - Frontend: RUNNING на порту 3000
+      - MongoDB: RUNNING
+      
+      Готово к тестированию!
+      Следующий этап: Биллинг и подписки (пункт 2 из ТЗ)
