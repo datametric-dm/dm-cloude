@@ -172,7 +172,8 @@ async def update_project(
     project_id: str,
     project_data: ProjectUpdate,
     current_user = Depends(get_current_user),
-    db = Depends(get_db)
+    db = Depends(get_db),
+    x_company_id: Optional[str] = Header(None, alias="X-Company-ID")
 ):
     """Обновить проект"""
     
