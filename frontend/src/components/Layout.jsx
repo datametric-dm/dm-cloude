@@ -12,9 +12,13 @@ import {
   Building2,
   LogOut,
   User as UserIcon,
+  ChevronDown,
+  UserCog,
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { toast } from 'sonner';
+import { useCompany } from '../contexts/CompanyContext';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu';
 
 const navigation = [
   { name: 'Дашборд', href: '/dashboard', icon: LayoutDashboard },
@@ -23,6 +27,7 @@ const navigation = [
   { name: 'Счета', href: '/invoices', icon: FileText },
   { name: 'Платежи', href: '/payments', icon: CreditCard },
   { name: 'Отчеты', href: '/reports', icon: BarChart3 },
+  { name: 'Команда', href: '/team', icon: UserCog },
 ];
 
 export default function Layout({ children }) {
