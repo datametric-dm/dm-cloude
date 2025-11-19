@@ -130,12 +130,17 @@ async def update_client(
     client_id: str,
     client_data: ClientUpdate,
     current_user = Depends(get_current_user),
-    db = Depends(get_db)
+    db = Depends(get_db),
+    x_company_id: Optional[str] = Header(None, alias="X-Company-ID")
 ):
-    """Обновить клиента"""
+    """Обновить клиента (с учетом tenant_id)"""
     
     # Проверяем существование
-    existing = clients_collection.find_one({"id": client_id})
+    query = {"id": client_id}
+    if x_company_id:
+        query["tenant_id"] = x_company_id
+    
+    existing = clients_collection.find_one(query)
     if not existing:
         raise HTTPException(status_code=404, detail="Клиент не найден")
     
@@ -144,12 +149,12 @@ async def update_client(
     update_data["updated_at"] = datetime.utcnow()
     
     clients_collection.update_one(
-        {"id": client_id},
+        query,
         {"$set": update_data}
     )
     
     # Получаем обновленного клиента
-    updated_client = clients_collection.find_one({"id": client_id})
+    updated_client = clients_collection.find_one(query)
     updated_client.pop("_id", None)
     
     return updated_client
