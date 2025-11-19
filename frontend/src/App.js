@@ -48,6 +48,7 @@ function App() {
                       <Routes>
                         <Route path="/" element={<Navigate to="/dashboard" replace />} />
                         <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="/owner-dashboard" element={<OwnerDashboard />} />
                         <Route path="/clients" element={<ClientsPage />} />
                         <Route path="/projects" element={<ProjectsPage />} />
                         <Route path="/project-flow" element={<ProjectFlow />} />
