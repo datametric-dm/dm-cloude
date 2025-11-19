@@ -1,13 +1,18 @@
 #!/usr/bin/env python3
 """
 Multi-Tenancy Backend API Testing Script
-Tests all multi-tenancy endpoints according to test_result.md requirements
+Tests all updated routers with multi-tenancy support:
+1. Invoices (счета) - /api/invoices
+2. Payments (платежи) - /api/payments  
+3. Projects (проекты) - /api/projects
+4. Services (услуги) - /api/services
+5. Reports (отчеты) - /api/reports
 """
 
 import requests
 import json
 import sys
-from datetime import datetime
+from datetime import datetime, date, timedelta
 import uuid
 
 # Backend URL from frontend/.env
