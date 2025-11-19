@@ -9,33 +9,36 @@ import uuid
 router = APIRouter(prefix="/payments")
 
 class PaymentBase(BaseModel):
-    invoice_id: Optional[str] = None
+    invoice_id: str
     client_id: str
+    project_id: Optional[str] = None
     amount: float
-    payment_date: date
-    payment_method: str = "bank_transfer"
+    date_expected: date
+    date_received: Optional[date] = None
     status: str = "pending"
-    description: Optional[str] = None
+    payment_method: Optional[str] = None
     notes: Optional[str] = None
 
 class PaymentCreate(PaymentBase):
     pass
 
 class PaymentUpdate(PaymentBase):
+    invoice_id: Optional[str] = None
     client_id: Optional[str] = None
     amount: Optional[float] = None
+    date_expected: Optional[date] = None
     status: Optional[str] = None
-    payment_date: Optional[date] = None
 
 class PaymentRead(BaseModel):
     id: str
-    invoice_id: Optional[str] = None
+    invoice_id: str
     client_id: str
+    project_id: Optional[str] = None
     amount: float
-    payment_date: datetime
-    payment_method: str = "bank_transfer"
-    status: str = "pending"
-    description: Optional[str] = None
+    date_expected: datetime
+    date_received: Optional[datetime] = None
+    status: str
+    payment_method: Optional[str] = None
     notes: Optional[str] = None
     created_at: datetime
 
@@ -68,9 +71,14 @@ async def get_payments(
 @router.get("/overdue/list", response_model=List[PaymentRead])
 async def get_overdue_payments(
     current_user = Depends(get_current_user),
-    db = Depends(get_db)
+    db = Depends(get_db),
+    x_company_id: Optional[str] = Header(None, alias="X-Company-ID")
 ):
-    payments = list(payments_collection.find({"status": "pending"}))
+    query = {"status": "pending"}
+    if x_company_id:
+        query["tenant_id"] = x_company_id
+    
+    payments = list(payments_collection.find(query))
     for payment in payments:
         payment.pop("_id", None)
     return payments
@@ -79,11 +87,17 @@ async def get_overdue_payments(
 async def get_payment(
     payment_id: str,
     current_user = Depends(get_current_user),
-    db = Depends(get_db)
+    db = Depends(get_db),
+    x_company_id: Optional[str] = Header(None, alias="X-Company-ID")
 ):
-    payment = payments_collection.find_one({"id": payment_id})
+    query = {"id": payment_id}
+    if x_company_id:
+        query["tenant_id"] = x_company_id
+    
+    payment = payments_collection.find_one(query)
     if not payment:
         raise HTTPException(status_code=404, detail="Платеж не найден")
+    
     payment.pop("_id", None)
     return payment
 
@@ -91,15 +105,22 @@ async def get_payment(
 async def create_payment(
     payment_data: PaymentCreate,
     current_user = Depends(get_current_user),
-    db = Depends(get_db)
+    db = Depends(get_db),
+    x_company_id: Optional[str] = Header(None, alias="X-Company-ID")
 ):
+    if not x_company_id:
+        raise HTTPException(status_code=400, detail="X-Company-ID header is required")
+    
     payment_dict = payment_data.dict()
     
-    if payment_dict.get("payment_date") and not isinstance(payment_dict["payment_date"], datetime):
-        payment_dict["payment_date"] = datetime.combine(payment_dict["payment_date"], datetime.min.time())
+    if payment_dict.get("date_expected") and not isinstance(payment_dict["date_expected"], datetime):
+        payment_dict["date_expected"] = datetime.combine(payment_dict["date_expected"], datetime.min.time())
+    if payment_dict.get("date_received") and not isinstance(payment_dict["date_received"], datetime):
+        payment_dict["date_received"] = datetime.combine(payment_dict["date_received"], datetime.min.time())
     
     payment_dict.update({
         "id": str(uuid.uuid4()),
+        "tenant_id": x_company_id,
         "created_at": datetime.utcnow()
     })
     
@@ -112,20 +133,26 @@ async def update_payment(
     payment_id: str,
     payment_data: PaymentUpdate,
     current_user = Depends(get_current_user),
-    db = Depends(get_db)
+    db = Depends(get_db),
+    x_company_id: Optional[str] = Header(None, alias="X-Company-ID")
 ):
-    existing = payments_collection.find_one({"id": payment_id})
+    query = {"id": payment_id}
+    if x_company_id:
+        query["tenant_id"] = x_company_id
+    
+    existing = payments_collection.find_one(query)
     if not existing:
         raise HTTPException(status_code=404, detail="Платеж не найден")
     
     update_data = payment_data.dict(exclude_unset=True)
     
-    if update_data.get("payment_date") and not isinstance(update_data["payment_date"], datetime):
-        update_data["payment_date"] = datetime.combine(update_data["payment_date"], datetime.min.time())
+    if update_data.get("date_expected") and not isinstance(update_data["date_expected"], datetime):
+        update_data["date_expected"] = datetime.combine(update_data["date_expected"], datetime.min.time())
+    if update_data.get("date_received") and not isinstance(update_data["date_received"], datetime):
+        update_data["date_received"] = datetime.combine(update_data["date_received"], datetime.min.time())
     
-    payments_collection.update_one({"id": payment_id}, {"$set": update_data})
-    
-    updated_payment = payments_collection.find_one({"id": payment_id})
+    payments_collection.update_one(query, {"$set": update_data})
+    updated_payment = payments_collection.find_one(query)
     updated_payment.pop("_id", None)
     return updated_payment
 
@@ -133,26 +160,37 @@ async def update_payment(
 async def delete_payment(
     payment_id: str,
     current_user = Depends(get_current_user),
-    db = Depends(get_db)
+    db = Depends(get_db),
+    x_company_id: Optional[str] = Header(None, alias="X-Company-ID")
 ):
-    result = payments_collection.delete_one({"id": payment_id})
+    query = {"id": payment_id}
+    if x_company_id:
+        query["tenant_id"] = x_company_id
+    
+    result = payments_collection.delete_one(query)
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Платеж не найден")
+    
     return {"message": "Платеж успешно удален", "id": payment_id}
 
 @router.post("/{payment_id}/mark-received")
 async def mark_payment_received(
     payment_id: str,
     current_user = Depends(get_current_user),
-    db = Depends(get_db)
+    db = Depends(get_db),
+    x_company_id: Optional[str] = Header(None, alias="X-Company-ID")
 ):
-    existing = payments_collection.find_one({"id": payment_id})
-    if not existing:
+    query = {"id": payment_id}
+    if x_company_id:
+        query["tenant_id"] = x_company_id
+    
+    payment = payments_collection.find_one(query)
+    if not payment:
         raise HTTPException(status_code=404, detail="Платеж не найден")
     
     payments_collection.update_one(
-        {"id": payment_id},
-        {"$set": {"status": "completed"}}
+        query,
+        {"$set": {"status": "received", "date_received": datetime.utcnow()}}
     )
     
-    return {"message": "Платеж отмечен как полученный", "id": payment_id}
+    return {"message": "Платеж отмечен как полученный"}
