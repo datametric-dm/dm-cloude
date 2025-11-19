@@ -418,10 +418,12 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Companies API - создание, получение списка, обновление"
-    - "Team Management API - приглашение, управление ролями"
-    - "Frontend Multi-tenancy Flow - вход → выбор компании → работа"
-    - "Data Isolation - проверка фильтрации по tenant_id"
+    - "Updated Routers Multi-tenancy Testing - COMPLETED"
+    - "Invoices API Multi-tenancy - COMPLETED"
+    - "Payments API Multi-tenancy - COMPLETED"
+    - "Projects API Multi-tenancy - COMPLETED"
+    - "Services API Multi-tenancy - COMPLETED"
+    - "Reports API Multi-tenancy - COMPLETED"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
