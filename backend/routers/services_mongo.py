@@ -112,9 +112,14 @@ async def update_service(
 async def delete_service(
     service_id: str,
     current_user = Depends(get_current_user),
-    db = Depends(get_db)
+    db = Depends(get_db),
+    x_company_id: Optional[str] = Header(None, alias="X-Company-ID")
 ):
-    result = services_collection.delete_one({"id": service_id})
+    query = {"id": service_id}
+    if x_company_id:
+        query["tenant_id"] = x_company_id
+    
+    result = services_collection.delete_one(query)
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Услуга не найдена")
     return {"message": "Услуга успешно удалена", "id": service_id}
