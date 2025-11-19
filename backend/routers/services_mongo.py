@@ -90,16 +90,21 @@ async def update_service(
     service_id: str,
     service_data: ServiceUpdate,
     current_user = Depends(get_current_user),
-    db = Depends(get_db)
+    db = Depends(get_db),
+    x_company_id: Optional[str] = Header(None, alias="X-Company-ID")
 ):
-    existing = services_collection.find_one({"id": service_id})
+    query = {"id": service_id}
+    if x_company_id:
+        query["tenant_id"] = x_company_id
+    
+    existing = services_collection.find_one(query)
     if not existing:
         raise HTTPException(status_code=404, detail="Услуга не найдена")
     
     update_data = service_data.dict(exclude_unset=True)
-    services_collection.update_one({"id": service_id}, {"$set": update_data})
+    services_collection.update_one(query, {"$set": update_data})
     
-    updated_service = services_collection.find_one({"id": service_id})
+    updated_service = services_collection.find_one(query)
     updated_service.pop("_id", None)
     return updated_service
 
