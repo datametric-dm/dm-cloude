@@ -14,6 +14,7 @@ import {
   User as UserIcon,
   ChevronDown,
   UserCog,
+  TrendingUp,
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { toast } from 'sonner';
