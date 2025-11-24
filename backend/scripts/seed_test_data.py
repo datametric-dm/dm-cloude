@@ -2,11 +2,10 @@
 Скрипт для наполнения БД тестовыми данными
 Создает 2 компании с полным набором данных
 """
-import asyncio
 import random
 from datetime import datetime, timedelta
 from uuid import uuid4
-from motor.motor_asyncio import AsyncIOMotorClient
+from pymongo import MongoClient
 import os
 from dotenv import load_dotenv
 
@@ -16,7 +15,7 @@ load_dotenv()
 MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017")
 DB_NAME = os.getenv("DB_NAME", "test_database")
 
-client = AsyncIOMotorClient(MONGO_URL)
+client = MongoClient(MONGO_URL)
 db = client[DB_NAME]
 
 # Генераторы случайных данных
