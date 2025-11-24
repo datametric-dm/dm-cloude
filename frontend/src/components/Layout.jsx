@@ -45,6 +45,87 @@ const analyticsNavigation = [
   { name: 'Отчеты', href: '/reports', icon: BarChart3, description: 'Общие отчеты' },
 ];
 
+// Компонент выпадающего списка аналитики
+function AnalyticsDropdown({ items, currentPath, onNavigate }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+  
+  // Проверяем, активен ли какой-то из подпунктов
+  const isAnyActive = items.some(item => currentPath === item.href);
+
+  const handleItemClick = (href) => {
+    navigate(href);
+    setIsOpen(false);
+    onNavigate();
+  };
+
+  return (
+    <div className="space-y-1">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className={cn(
+          'group flex items-center justify-between w-full px-3 py-2 text-sm font-medium rounded-lg transition-colors',
+          isAnyActive
+            ? 'bg-blue-100 text-blue-700'
+            : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+        )}
+      >
+        <div className="flex items-center">
+          <BarChart3
+            className={cn(
+              'mr-3 h-5 w-5 flex-shrink-0',
+              isAnyActive ? 'text-blue-600' : 'text-gray-400 group-hover:text-gray-500'
+            )}
+          />
+          <span>Аналитика и отчеты</span>
+        </div>
+        <ChevronRight
+          className={cn(
+            'h-4 w-4 transition-transform',
+            isOpen ? 'rotate-90' : '',
+            isAnyActive ? 'text-blue-600' : 'text-gray-400'
+          )}
+        />
+      </button>
+
+      {/* Выпадающий список */}
+      {isOpen && (
+        <div className="ml-4 space-y-1 border-l-2 border-gray-200 pl-4">
+          {items.map((item) => {
+            const Icon = item.icon;
+            const isActive = currentPath === item.href;
+            return (
+              <button
+                key={item.name}
+                onClick={() => handleItemClick(item.href)}
+                className={cn(
+                  'group flex items-start w-full px-3 py-2 text-sm rounded-lg transition-colors text-left',
+                  isActive
+                    ? 'bg-blue-50 text-blue-700'
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                )}
+              >
+                <Icon
+                  className={cn(
+                    'mr-2 h-4 w-4 flex-shrink-0 mt-0.5',
+                    isActive ? 'text-blue-600' : 'text-gray-400 group-hover:text-gray-500'
+                  )}
+                />
+                <div>
+                  <div className="font-medium">{item.name}</div>
+                  {item.description && (
+                    <div className="text-xs text-gray-500 mt-0.5">{item.description}</div>
+                  )}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Layout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
