@@ -136,6 +136,7 @@ export default function Layout({ children }) {
         )}
 
         <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+          {/* Основные разделы */}
           {navigation.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.href;
@@ -161,6 +162,13 @@ export default function Layout({ children }) {
               </Link>
             );
           })}
+
+          {/* Аналитика и отчеты (выпадающий список) */}
+          <AnalyticsDropdown 
+            items={analyticsNavigation}
+            currentPath={location.pathname}
+            onNavigate={() => setSidebarOpen(false)}
+          />
         </nav>
 
         <div className="p-4 border-t border-gray-200">
