@@ -340,7 +340,7 @@
 
 ## 🔗 ДОСТУП К СИСТЕМЕ
 
-**URL:** https://agencyops.preview.emergentagent.com
+**URL:** https://agencysuite.preview.emergentagent.com
 
 **Тестовый аккаунт:**
 - Email: `adminDM@test.com`

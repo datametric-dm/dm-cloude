@@ -8,7 +8,7 @@ import requests
 import json
 from datetime import datetime, date, timedelta
 
-BACKEND_URL = "https://agencyops.preview.emergentagent.com/api"
+BACKEND_URL = "https://agencysuite.preview.emergentagent.com/api"
 
 def comprehensive_test():
     """Run comprehensive test creating all data from scratch"""

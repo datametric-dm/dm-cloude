@@ -129,7 +129,7 @@ API_VERSION_STR=/api
 
 **Содержимое:**
 ```env
-REACT_APP_BACKEND_URL=https://agencyops.preview.emergentagent.com
+REACT_APP_BACKEND_URL=https://agencysuite.preview.emergentagent.com
 WDS_SOCKET_PORT=443
 ```
 

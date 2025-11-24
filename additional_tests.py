@@ -7,7 +7,7 @@ import requests
 import json
 from datetime import datetime, date, timedelta
 
-BACKEND_URL = "https://agencyops.preview.emergentagent.com/api"
+BACKEND_URL = "https://agencysuite.preview.emergentagent.com/api"
 
 def test_specific_scenarios():
     """Test the specific scenarios mentioned in the review request"""

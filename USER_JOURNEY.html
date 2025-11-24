@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Путь клиента - Multi-tenant SaaS для агентств</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 40px;
+            background: #ecf0f1;
+            padding: 10px;
+            border-left: 5px solid #3498db;
+        }
+        h3 {
+            color: #555;
+            margin-top: 25px;
+        }
+        .section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .mermaid {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .phase {
+            background: #e8f4f8;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .module {
+            background: #fef9e7;
+            border-left: 4px solid #f39c12;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .feature {
+            padding: 8px;
+            margin: 5px 0;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+        ul {
+            line-height: 1.8;
+        }
+        .highlight {
+            background: #ffffcc;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        .integration {
+            background: #e8f8f5;
+            border-left: 4px solid #1abc9c;
+            padding: 10px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚀 Полный путь клиента: Multi-tenant SaaS платформа для маркетинговых агентств</h1>
+
+    <div class="section">
+        <h2>📋 Обзор платформы</h2>
+        <p><strong>Целевая аудитория:</strong> Маркетинговые агентства, которым нужен централизованный инструмент для управления проектами, финансами и клиентами.</p>
+        <p><strong>Ключевая проблема:</strong> Агентства используют разрозненные инструменты → неэффективность и отсутствие целостной картины бизнеса.</p>
+        <p><strong>Решение:</strong> Единое интегрированное приложение с изолированными рабочими пространствами для каждого агентства (multi-tenancy).</p>
+    </div>
+
+    <h2>🎯 Этап 1: Первое знакомство и регистрация</h2>
+    
+    <div class="mermaid">
+    graph TD
+        A[Пользователь узнает о платформе] --> B{Есть аккаунт?}
+        B -->|Нет| C[Регистрация нового агентства]
+        B -->|Да| D[Вход в систему]
+        C --> E[Заполнение данных компании]
+        E --> F[Создание первого пользователя Owner]
+        F --> G[Верификация email]
+        G --> H[Первый вход в систему]
+        D --> H
+        H --> I[Выбор компании из списка доступных]
+        I --> J[Попадание на главную страницу]
+        
+        style C fill:#e8f4f8
+        style D fill:#e8f4f8
+        style I fill:#fef9e7
+        style J fill:#d5f4e6
+    </div>
+
+    <div class="phase">
+        <h3>Шаг 1.1: Регистрация</h3>
+        <ul>
+            <li>Пользователь заходит на landing page платформы</li>
+            <li>Нажимает кнопку "Зарегистрироваться"</li>
+            <li>Заполняет форму:
+                <ul>
+                    <li>Название агентства</li>
+                    <li>Email (станет владельцем/owner)</li>
+                    <li>Пароль</li>
+                    <li>Дополнительные данные (телефон, адрес)</li>
+                </ul>
+            </li>
+            <li>Система создает:
+                <ul>
+                    <li><strong>Company</strong> (новая компания в мультитенантной системе)</li>
+                    <li><strong>User</strong> (первый пользователь)</li>
+                    <li><strong>UserCompanyRole</strong> (роль "owner" для этого пользователя)</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div class="phase">
+        <h3>Шаг 1.2: Первый вход</h3>
+        <ul>
+            <li>Email: <span class="highlight">adminDM@test.com</span> (или email пользователя)</li>
+            <li>Пароль вводится</li>
+            <li>Система проверяет credentials → возвращает JWT токен</li>
+            <li>Frontend сохраняет токен в localStorage</li>
+            <li>Пользователь видит список компаний, к которым у него есть доступ</li>
+            <li>Выбирает компанию → система устанавливает <span class="highlight">X-Company-ID</span> в headers</li>
+        </ul>
+    </div>
+
+    <h2>🏠 Этап 2: Первоначальная настройка (Onboarding)</h2>
+
+    <div class="mermaid">
+    graph LR
+        A[Главная страница] --> B[Owner Dashboard]
+        B --> C[Настройка профиля компании]
+        C --> D[Добавление членов команды]
+        D --> E[Настройка интеграций]
+        E --> F{Интеграции}
+        F -->|Финансы| G[Tinkoff Acquiring]
+        F -->|Бухгалтерия| H[sCloud.ru]
+        F -->|CRM| I[amoCRM / Bitrix24]
+        G --> J[Начало работы]
+        H --> J
+        I --> J
+        
+        style B fill:#fef9e7
+        style E fill:#e8f8f5
+        style J fill:#d5f4e6
+    </div>
+
+    <div class="phase">
+        <h3>Шаг 2.1: Настройка команды</h3>
+        <ul>
+            <li>Owner заходит в раздел "Команда"</li>
+            <li>Добавляет сотрудников:
+                <ul>
+                    <li>Менеджеры проектов</li>
+                    <li>Дизайнеры</li>
+                    <li>Разработчики</li>
+                    <li>Маркетологи</li>
+                </ul>
+            </li>
+            <li>Назначает роли и права доступа</li>
+            <li>Сотрудники получают приглашения на email</li>
+        </ul>
+    </div>
+
+    <div class="integration">
+        <h3>Шаг 2.2: Подключение интеграций</h3>
+        <ul>
+            <li><strong>Tinkoff Acquiring:</strong> Для приема платежей от клиентов</li>
+            <li><strong>sCloud.ru:</strong> Синхронизация с бухгалтерской системой</li>
+            <li><strong>amoCRM / Bitrix24:</strong> Импорт клиентов и лидов (планируется)</li>
+        </ul>
+    </div>
+
+    <h2>💼 Этап 3: Ежедневная работа с платформой</h2>
+
+    <div class="mermaid">
+    graph TD
+        A[Вход в систему] --> B[Выбор компании]
+        B --> C{Какая задача?}
+        
+        C -->|Управление проектами| D[Project Flow]
+        C -->|Финансы| E[Financial Flow]
+        C -->|Команда| F[Team Load]
+        C -->|Клиенты| G[Client 360]
+        C -->|Аналитика| H[Owner Dashboard]
+        C -->|Риски| I[Risk Analyzer]
+        
+        D --> D1[Kanban доска]
+        D1 --> D2[Создание/перемещение задач]
+        D2 --> D3[Назначение исполнителей]
+        D3 --> D4[Отслеживание прогресса]
+        
+        E --> E1[Просмотр счетов]
+        E1 --> E2[Создание новых счетов]
+        E2 --> E3[Отслеживание платежей]
+        E3 --> E4[Финансовые отчеты]
+        
+        F --> F1[Загрузка команды]
+        F1 --> F2[Распределение задач]
+        
+        G --> G1[Карточка клиента]
+        G1 --> G2[История проектов]
+        G2 --> G3[Финансы клиента]
+        
+        H --> H1[Ключевые метрики]
+        H1 --> H2[Графики и визуализации]
+        
+        I --> I1[Анализ рисков проектов]
+        I1 --> I2[Рекомендации]
+        
+        style D fill:#e8f4f8
+        style E fill:#fef9e7
+        style F fill:#e8f8f5
+        style G fill:#fce4ec
+        style H fill:#f3e5f5
+        style I fill:#fff3e0
+    </div>
+
+    <h3>📊 Модуль 1: Project Flow (Канбан)</h3>
+    <div class="module">
+        <strong>Сценарий использования:</strong>
+        <ol>
+            <li>Менеджер проекта заходит в "Project Flow"</li>
+            <li>Видит Kanban доску с колонками: Backlog → In Progress → Review → Done</li>
+            <li>Создает новую задачу:
+                <ul>
+                    <li>Название: "Дизайн лендинга для клиента X"</li>
+                    <li>Описание задачи</li>
+                    <li>Назначает дизайнера</li>
+                    <li>Устанавливает дедлайн</li>
+                    <li>Привязывает к проекту</li>
+                </ul>
+            </li>
+            <li>Перетаскивает задачу между колонками drag & drop</li>
+            <li>Команда видит обновления в реальном времени</li>
+        </ol>
+        <strong>Технология:</strong> @dnd-kit для drag & drop
+    </div>
+
+    <h3>💰 Модуль 2: Financial Flow</h3>
+    <div class="module">
+        <strong>Сценарий использования:</strong>
+        <ol>
+            <li>Финансовый менеджер открывает "Financial Flow"</li>
+            <li>Видит список всех счетов (invoices) компании</li>
+            <li>Создает новый счет для клиента:
+                <ul>
+                    <li>Выбирает клиента из списка</li>
+                    <li>Добавляет услуги и стоимость</li>
+                    <li>Устанавливает срок оплаты</li>
+                    <li>Отправляет счет клиенту</li>
+                </ul>
+            </li>
+            <li>Система интегрируется с Tinkoff → клиент может оплатить онлайн</li>
+            <li>После оплаты статус автоматически меняется на "Оплачен"</li>
+            <li>Данные синхронизируются с sCloud.ru для бухгалтерии</li>
+        </ol>
+        <strong>Интеграции:</strong> Tinkoff Acquiring, sCloud.ru
+    </div>
+
+    <h3>👥 Модуль 3: Team Load (Загрузка команды)</h3>
+    <div class="module">
+        <strong>Сценарий использования:</strong>
+        <ol>
+            <li>Team Lead открывает "Team Load"</li>
+            <li>Видит визуализацию загруженности каждого сотрудника</li>
+            <li>Анализирует:
+                <ul>
+                    <li>Кто перегружен (более 40 часов в неделю)</li>
+                    <li>У кого есть свободное время</li>
+                    <li>Распределение задач по проектам</li>
+                </ul>
+            </li>
+            <li>Перераспределяет задачи для балансировки нагрузки</li>
+        </ol>
+    </div>
+
+    <h3>👤 Модуль 4: Client 360 (Карточка клиента)</h3>
+    <div class="module">
+        <strong>Сценарий использования:</strong>
+        <ol>
+            <li>Аккаунт-менеджер открывает "Client 360"</li>
+            <li>Выбирает клиента из списка</li>
+            <li>Видит полную информацию:
+                <ul>
+                    <li>Контактные данные</li>
+                    <li>Все текущие и завершенные проекты</li>
+                    <li>Финансовую историю (счета, платежи)</li>
+                    <li>Коммуникации и заметки</li>
+                    <li>Уровень удовлетворенности</li>
+                </ul>
+            </li>
+            <li>Добавляет новые заметки о встречах</li>
+            <li>Создает новый проект для клиента</li>
+        </ol>
+    </div>
+
+    <h3>⚠️ Модуль 5: Risk Analyzer (Анализатор рисков)</h3>
+    <div class="module">
+        <strong>Сценарий использования:</strong>
+        <ol>
+            <li>Owner открывает "Risk Analyzer"</li>
+            <li>Система анализирует все проекты и выявляет риски:
+                <ul>
+                    <li>🔴 Проекты с просроченными задачами</li>
+                    <li>🟡 Проекты с перегруженной командой</li>
+                    <li>🟠 Клиенты с задержкой платежей</li>
+                    <li>🔵 Проекты без активности более недели</li>
+                </ul>
+            </li>
+            <li>Получает рекомендации по устранению рисков</li>
+            <li>Принимает меры: перераспределяет ресурсы, связывается с клиентами</li>
+        </ol>
+        <strong>Планируется:</strong> AI-powered предсказание рисков
+    </div>
+
+    <h3>📈 Модуль 6: Owner Dashboard (Панель владельца)</h3>
+    <div class="module">
+        <strong>Сценарий использования:</strong>
+        <ol>
+            <li>Owner заходит в "Owner Dashboard"</li>
+            <li>Видит ключевые метрики бизнеса:
+                <ul>
+                    <li>📊 Общая выручка (текущий месяц / квартал / год)</li>
+                    <li>💼 Количество активных проектов</li>
+                    <li>👥 Размер команды и загрузка</li>
+                    <li>😊 Средний уровень удовлетворенности клиентов</li>
+                    <li>⚠️ Критичные риски</li>
+                </ul>
+            </li>
+            <li>Изучает графики:
+                <ul>
+                    <li>Динамика выручки по месяцам</li>
+                    <li>Распределение проектов по статусам</li>
+                    <li>Top 5 клиентов по выручке</li>
+                </ul>
+            </li>
+            <li>Принимает стратегические решения на основе данных</li>
+        </ol>
+    </div>
+
+    <h2>🔄 Этап 4: Мультитенантность (Работа с несколькими компаниями)</h2>
+
+    <div class="mermaid">
+    graph LR
+        A[Пользователь] --> B{Работает в нескольких агентствах?}
+        B -->|Да| C[Список доступных компаний]
+        B -->|Нет| D[Единственная компания]
+        C --> E[Alpha Agency]
+        C --> F[Bravo Solutions]
+        E --> G[Переключение контекста]
+        F --> G
+        G --> H[X-Company-ID устанавливается]
+        H --> I[Данные изолированы]
+        I --> J[Работа с данными компании]
+        D --> H
+        
+        style C fill:#e8f4f8
+        style H fill:#fef9e7
+        style I fill:#ffe6e6
+    </div>
+
+    <div class="phase">
+        <h3>Как работает multi-tenancy?</h3>
+        <ul>
+            <li><strong>Изоляция данных:</strong> Каждая компания видит только свои данные</li>
+            <li><strong>X-Company-ID:</strong> Header, который идентифицирует текущую компанию</li>
+            <li><strong>Middleware:</strong> На backend проверяет, что пользователь имеет доступ к компании</li>
+            <li><strong>Переключение:</strong> Пользователь может работать с разными компаниями, просто выбирая их из списка</li>
+        </ul>
+        
+        <strong>Пример:</strong>
+        <ul>
+            <li>Фрилансер работает с 2 агентствами: Alpha Agency и Bravo Solutions</li>
+            <li>Утром заходит в Alpha Agency → видит проекты Alpha</li>
+            <li>Днем переключается на Bravo Solutions → видит совершенно другие данные</li>
+            <li>Данные не пересекаются, полная изоляция</li>
+        </ul>
+    </div>
+
+    <h2>🔗 Этап 5: Интеграции с внешними системами</h2>
+
+    <div class="mermaid">
+    graph TD
+        A[Платформа агентства] --> B{Интеграции}
+        
+        B --> C[💳 Tinkoff Acquiring]
+        C --> C1[Прием платежей]
+        C1 --> C2[Автоматическое обновление статусов]
+        
+        B --> D[📊 sCloud.ru]
+        D --> D1[Синхронизация счетов]
+        D1 --> D2[Автоматическая бухгалтерия]
+        
+        B --> E[📞 CRM системы]
+        E --> E1[amoCRM]
+        E --> E2[Bitrix24]
+        E1 --> E3[Импорт клиентов]
+        E2 --> E3
+        E3 --> E4[Синхронизация лидов]
+        
+        B --> F[📋 Task Managers]
+        F --> F1[Импорт задач]
+        
+        style C fill:#e8f4f8
+        style D fill:#fef9e7
+        style E fill:#e8f8f5
+    </div>
+
+    <div class="integration">
+        <h3>Workflow интеграций:</h3>
+        <ol>
+            <li><strong>Настройка:</strong> Owner заходит в раздел "Интеграции"</li>
+            <li><strong>Подключение:</strong> Вводит API ключи сервисов</li>
+            <li><strong>Webhook:</strong> Платформа получает уведомления о событиях:
+                <ul>
+                    <li>Новый платеж в Tinkoff → автоматически закрывается счет</li>
+                    <li>Новый лид в CRM → создается клиент в Client 360</li>
+                    <li>Изменение счета → синхронизация с sCloud.ru</li>
+                </ul>
+            </li>
+            <li><strong>Автоматизация:</strong> Данные синхронизируются автоматически</li>
+        </ol>
+    </div>
+
+    <h2>📱 Этап 6: Мобильный опыт (будущее развитие)</h2>
+    <div class="section">
+        <p>В будущем планируется:</p>
+        <ul>
+            <li>📱 Адаптивный дизайн для мобильных устройств</li>
+            <li>📲 Push-уведомления о важных событиях</li>
+            <li>🔔 Уведомления о новых задачах, платежах, рисках</li>
+        </ul>
+    </div>
+
+    <h2>🎯 Резюме: Ценность для клиента</h2>
+    <div class="section" style="background: #d5f4e6; border-left: 5px solid #27ae60;">
+        <h3>До платформы:</h3>
+        <ul>
+            <li>❌ Проекты в Trello, финансы в Excel, клиенты в CRM</li>
+            <li>❌ Ручная синхронизация данных</li>
+            <li>❌ Нет целостной картины бизнеса</li>
+            <li>❌ Время тратится на переключение между инструментами</li>
+        </ul>
+        
+        <h3>С платформой:</h3>
+        <ul>
+            <li>✅ Все в одном месте</li>
+            <li>✅ Автоматическая синхронизация через интеграции</li>
+            <li>✅ Owner Dashboard с полной аналитикой</li>
+            <li>✅ Экономия времени → рост эффективности</li>
+            <li>✅ Data-driven решения на основе Risk Analyzer</li>
+        </ul>
+    </div>
+
+    <h2>🧪 Тестовое окружение</h2>
+    <div class="section" style="background: #fff3cd; border-left: 5px solid #ffc107;">
+        <p><strong>Для демонстрации платформы созданы:</strong></p>
+        <ul>
+            <li><strong>Пользователь:</strong> adminDM@test.com</li>
+            <li><strong>Компания 1:</strong> Alpha Agency
+                <ul>
+                    <li>5 активных проектов с задачами</li>
+                    <li>8 членов команды</li>
+                    <li>15 счетов (оплаченные и ожидающие)</li>
+                    <li>Реалистичные данные</li>
+                </ul>
+            </li>
+            <li><strong>Компания 2:</strong> Bravo Solutions
+                <ul>
+                    <li>4 активных проекта</li>
+                    <li>6 членов команды</li>
+                    <li>12 счетов</li>
+                    <li>Другой набор клиентов</li>
+                </ul>
+            </li>
+        </ul>
+        <p>Вы можете войти под этим пользователем и увидеть полный функционал с реальными данными!</p>
+    </div>
+
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            }
+        });
+    </script>
+</body>
+</html>
