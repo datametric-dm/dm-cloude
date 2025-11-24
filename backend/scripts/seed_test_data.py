@@ -134,11 +134,11 @@ def create_clients(company_id, count=8):
         }
         clients.append(client)
     
-    await db.clients.insert_many(clients)
+    db.clients.insert_many(clients)
     print(f"  ✅ Создано {len(clients)} клиентов")
     return clients
 
-async def create_projects(company_id, clients, count=12):
+def create_projects(company_id, clients, count=12):
     """Создание проектов для компании"""
     print(f"\n📁 Создание {count} проектов для {company_id}...")
     
@@ -168,11 +168,11 @@ async def create_projects(company_id, clients, count=12):
         }
         projects.append(project)
     
-    await db.projects.insert_many(projects)
+    db.projects.insert_many(projects)
     print(f"  ✅ Создано {len(projects)} проектов")
     return projects
 
-async def create_invoices(company_id, clients, projects, count=25):
+def create_invoices(company_id, clients, projects, count=25):
     """Создание счетов для компании"""
     print(f"\n💰 Создание {count} счетов для {company_id}...")
     
@@ -204,11 +204,11 @@ async def create_invoices(company_id, clients, projects, count=25):
         }
         invoices.append(invoice)
     
-    await db.invoices.insert_many(invoices)
+    db.invoices.insert_many(invoices)
     print(f"  ✅ Создано {len(invoices)} счетов")
     return invoices
 
-async def create_payments(company_id, invoices, count=20):
+def create_payments(company_id, invoices, count=20):
     """Создание платежей для компании"""
     print(f"\n💳 Создание {count} платежей для {company_id}...")
     
@@ -230,11 +230,11 @@ async def create_payments(company_id, invoices, count=20):
         }
         payments.append(payment)
     
-    await db.payments.insert_many(payments)
+    db.payments.insert_many(payments)
     print(f"  ✅ Создано {len(payments)} платежей")
     return payments
 
-async def create_kanban_data(company_id, projects):
+def create_kanban_data(company_id, projects):
     """Создание Kanban досок для компании"""
     print(f"\n📋 Создание Kanban данных для {company_id}...")
     
@@ -287,7 +287,7 @@ async def create_kanban_data(company_id, projects):
         }
     ]
     
-    await db.project_flow_columns.insert_many(columns)
+    db.project_flow_columns.insert_many(columns)
     print(f"  ✅ Создано {len(columns)} колонок")
     
     # Создание этапов для активных проектов
@@ -318,10 +318,10 @@ async def create_kanban_data(company_id, projects):
             stages.append(stage)
     
     if stages:
-        await db.project_flow_stages.insert_many(stages)
+        db.project_flow_stages.insert_many(stages)
         print(f"  ✅ Создано {len(stages)} этапов")
 
-async def main():
+def main():
     """Основная функция"""
     print("=" * 60)
     print("🚀 НАПОЛНЕНИЕ БД ТЕСТОВЫМИ ДАННЫМИ")
@@ -329,10 +329,10 @@ async def main():
     
     try:
         # Очистка
-        await clear_test_data()
+        clear_test_data()
         
         # Создание компаний
-        companies = await create_companies()
+        companies = create_companies()
         
         # Наполнение данными для каждой компании
         for company in companies:
@@ -342,19 +342,19 @@ async def main():
             print(f"{'='*60}")
             
             # Клиенты
-            clients = await create_clients(company_id, count=8)
+            clients = create_clients(company_id, count=8)
             
             # Проекты
-            projects = await create_projects(company_id, clients, count=12)
+            projects = create_projects(company_id, clients, count=12)
             
             # Счета
-            invoices = await create_invoices(company_id, clients, projects, count=25)
+            invoices = create_invoices(company_id, clients, projects, count=25)
             
             # Платежи
-            payments = await create_payments(company_id, invoices, count=20)
+            payments = create_payments(company_id, invoices, count=20)
             
             # Kanban
-            await create_kanban_data(company_id, projects)
+            create_kanban_data(company_id, projects)
         
         print("\n" + "=" * 60)
         print("✅ ДАННЫЕ УСПЕШНО СОЗДАНЫ!")
@@ -379,4 +379,4 @@ async def main():
         client.close()
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
