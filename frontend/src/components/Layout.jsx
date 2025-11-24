@@ -13,6 +13,7 @@ import {
   LogOut,
   User as UserIcon,
   ChevronDown,
+  ChevronRight,
   UserCog,
   TrendingUp,
   AlertTriangle,
@@ -23,20 +24,25 @@ import { toast } from 'sonner';
 import { useCompany } from '../contexts/CompanyContext';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu';
 
+// Основные разделы
 const navigation = [
   { name: 'Дашборд', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'Owner Dashboard', href: '/owner-dashboard', icon: TrendingUp },
   { name: 'Клиенты', href: '/clients', icon: Users },
-  { name: 'Client 360', href: '/client-360', icon: Eye },
   { name: 'Проекты', href: '/projects', icon: FolderOpen },
   { name: 'Project Flow', href: '/project-flow', icon: FolderOpen },
-  { name: 'Financial Flow', href: '/financial-flow', icon: BarChart3 },
-  { name: 'Team Load', href: '/team-load', icon: Users },
-  { name: 'Risk Analyzer', href: '/risk-analyzer', icon: AlertTriangle },
   { name: 'Счета', href: '/invoices', icon: FileText },
   { name: 'Платежи', href: '/payments', icon: CreditCard },
-  { name: 'Отчеты', href: '/reports', icon: BarChart3 },
   { name: 'Команда', href: '/team', icon: UserCog },
+];
+
+// Аналитика и отчеты (выпадающий список)
+const analyticsNavigation = [
+  { name: 'Owner Dashboard', href: '/owner-dashboard', icon: TrendingUp, description: 'Сводный дашборд владельца' },
+  { name: 'Financial Flow', href: '/financial-flow', icon: BarChart3, description: 'План vs Факт' },
+  { name: 'Team Load', href: '/team-load', icon: Users, description: 'Загрузка команды' },
+  { name: 'Client 360', href: '/client-360', icon: Eye, description: 'Профили клиентов' },
+  { name: 'Risk Analyzer', href: '/risk-analyzer', icon: AlertTriangle, description: 'Анализ рисков' },
+  { name: 'Отчеты', href: '/reports', icon: BarChart3, description: 'Общие отчеты' },
 ];
 
 export default function Layout({ children }) {
