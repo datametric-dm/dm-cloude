@@ -107,11 +107,11 @@ def create_companies():
         }
     ]
     
-    await db.companies.insert_many(companies)
+    db.companies.insert_many(companies)
     print(f"  ✅ Создано {len(companies)} компаний")
     return companies
 
-async def create_clients(company_id, count=8):
+def create_clients(company_id, count=8):
     """Создание клиентов для компании"""
     print(f"\n👥 Создание {count} клиентов для {company_id}...")
     
