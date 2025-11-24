@@ -63,7 +63,7 @@ def random_date(start_days_ago, end_days_ago=0):
     random_days = random.randint(0, delta.days)
     return start + timedelta(days=random_days)
 
-async def clear_test_data():
+def clear_test_data():
     """Очистка старых тестовых данных"""
     print("🧹 Очистка старых данных...")
     
@@ -73,10 +73,10 @@ async def clear_test_data():
     ]
     
     for collection_name in collections:
-        result = await db[collection_name].delete_many({})
+        result = db[collection_name].delete_many({})
         print(f"  Удалено {result.deleted_count} записей из {collection_name}")
 
-async def create_companies():
+def create_companies():
     """Создание 2 тестовых компаний"""
     print("\n🏢 Создание компаний...")
     
